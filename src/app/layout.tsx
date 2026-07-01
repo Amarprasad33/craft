@@ -14,7 +14,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Craft — Amar's Design Engineering",
-  description: "A small shelf of replicas, originals, and animations.",
+  description:
+    "A small shelf of replicas, originals, and animations.",
 };
 
 export default function RootLayout({
