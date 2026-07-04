@@ -31,7 +31,7 @@ export const Bar = () => {
       duration: 1.6,
       times: [0, 0.32, 0.9],
       repeat: Infinity,
-      repeatDelay: 0.8
+      repeatDelay: 1.2
     });
   }, []);
 
