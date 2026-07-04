@@ -17,10 +17,18 @@ const CHIMNEY_PATHS = [
     "M3.3096 21.4439C3.5487 19.1513 5.4559 17.4114 7.7299 17.4114C9.9937 17.4114 11.8958 19.1362 12.1473 21.4169L13.4059 32.8308C13.5576 34.2071 12.4952 35.4114 11.129 35.4114H4.3994C3.0388 35.4114 1.978 34.2164 2.121 32.8447L3.3096 21.4439Z",
 ] as const;
 
-const CHIMNEY_TRANSITION = {
+const SQUEEZE_TRANSITION = {
     type: "spring" as const,
-    stiffness: 420,
-    damping: 28,
+    stiffness: 320,
+    bounce: 0.28,
+    mass: 0.75,
+};
+
+const RELEASE_TRANSITION = {
+    type: "spring" as const,
+    stiffness: 180,
+    bounce: 0.58,
+    mass: 1.1,
 };
 
 export const FactoryIcon = () => {
@@ -29,11 +37,11 @@ export const FactoryIcon = () => {
     // const smokeY = useTransform(chimneyProgress, [0, 1], [0, 2.98]);
 
     const squeezeChimney = () => {
-        animate(chimneyProgress, 1, CHIMNEY_TRANSITION);
+        animate(chimneyProgress, 1, SQUEEZE_TRANSITION);
     };
 
     const releaseChimney = () => {
-        animate(chimneyProgress, 0, CHIMNEY_TRANSITION);
+        animate(chimneyProgress, 0, RELEASE_TRANSITION);
     };
 
     return (
