@@ -20,8 +20,8 @@ const FactoryIconV2 = () => {
     ]
     const lineOffsets = [
         { start: 8, end: -8, duration: 1, delay: 0.4 },
-        { start: 10, end: -10, duration: 0.9, delay: 0.66 },
-        { start: 8, end: -8, duration: 1, delay: 0.77 },
+        { start: 10, end: -10, duration: 1, delay: 0.6 },
+        { start: 8, end: -8, duration: 1, delay: 0.78 },
     ];
 
     const barProgress = useMotionValue(0);
@@ -56,7 +56,7 @@ const FactoryIconV2 = () => {
                             delay,
                             ease: easeOut,
                             repeat: Infinity,
-                            repeatDelay: 1.96,
+                            repeatDelay: 1.92,
                         }
                     )
                 )
@@ -91,22 +91,6 @@ const FactoryIconV2 = () => {
         //     repeat: Infinity,
         //     repeatDelay: 1.2
         // });
-
-        // scope.current.querySelectorAll("[data-animate='line']").forEach((line: any) => {
-        //     animate(
-        //       line,
-        //       {
-        //         strokeDashoffset: 0,
-        //       },
-        //       {
-        //         delay: 0.04,
-        //         duration: 0.53,
-        //         times: [0.7, 0.9],
-        //       },
-        //     );
-        //   });
-
-
     }, []);
 
     return (
@@ -114,13 +98,13 @@ const FactoryIconV2 = () => {
             onHoverStart={animateSteam}
             onHoverEnd={stopSteam}
         >
-            <path d="M25.8418 24.8776C25.5105 25.6338 26.4045 26.3341 27.0593 25.8313L36.7029 18.4268C37.0634 18.15 37.5052 18 37.9597 18C38.9217 18 39.7016 18.7799 39.7016 19.7419V37.2339C39.7016 38.1959 38.9217 38.9758 37.9597 38.9758H10.7419C9.77989 38.9758 9 38.1959 9 37.2339V34.8866C9 33.0878 10.4955 31.6504 11.7798 30.3909L23.9542 18.6192C24.365 18.222 24.914 18 25.4854 18C27.0745 18 28.1408 19.6314 27.503 21.0869L25.8418 24.8776Z" fill="#9295FE" />
+            <path d="M25.8418 24.8776C25.5105 25.6338 26.4045 26.3341 27.0593 25.8313L36.7029 18.4268C37.0634 18.15 37.5052 18 37.9597 18C38.9217 18 39.7016 18.7799 39.7016 19.7419V37.2339C39.7016 38.1959 38.9217 38.9758 37.9597 38.9758H10.7419C9.77989 38.9758 9 38.1959 9 37.2339V34.8866C9 33.0878 10.4955 31.6504 11.7798 30.3909L23.9542 18.6192C24.365 18.222 24.914 18 25.4854 18C27.0745 18 28.1408 19.6314 27.503 21.0869L25.8418 24.8776Z" fill="#D1D2D4" />
             <AnimatePresence mode="popLayout">
                 <motion.g ref={scope} >
                     <motion.path
                         data-animate="line"
                         d="M5.76209 14.1129C4.96371 13.5685 5.03629 12.1169 5.94355 10.7379C6.85081 9.35887 5.61694 7.47177 5 7"
-                        stroke="#9295FE"
+                        stroke="#C9C9C9"
                         strokeLinecap="round"
                         strokeDasharray="7.11px 8.5px"
                         strokeDashoffset="8px"
@@ -130,7 +114,7 @@ const FactoryIconV2 = () => {
                     <motion.path
                         data-animate="line"
                         d="M8.99328 13.6371C8.59407 13.0565 7.92075 11.2794 8.70295 9.89919C10.346 7 6.34595 7.5 8.8459 4"
-                        stroke="#9295FE"
+                        stroke="#C9C9C9"
                         strokeWidth="1.2"
                         strokeLinecap="round"
                         strokeDasharray="9.64px 11px"
@@ -141,7 +125,7 @@ const FactoryIconV2 = () => {
                     <motion.path
                         data-animate="line"
                         d="M12.5035 14.1129C13.3019 13.5685 13.2293 12.1169 12.3221 10.7379C11.4148 9.35887 12.6487 7.47177 13.2656 7"
-                        stroke="#9295FE"
+                        stroke="#C9C9C9"
                         strokeLinecap="round"
                         strokeDasharray="7.11px 8.5px"
                         strokeDashoffset="8px"
@@ -152,9 +136,9 @@ const FactoryIconV2 = () => {
                 </motion.g>
             </AnimatePresence>
 
-            <motion.path d={barPath} fill="#363DEE" />
-            <rect x="19.605" y="30.7178" width="5.08065" height="3.19355" rx="1.16129" fill="#4E28F5" />
-            <rect x="30.7097" y="30.7178" width="5.08065" height="3.19355" rx="1.16129" fill="#4E28F5" />
+            <motion.path d={barPath} fill="#969697" />
+            <rect x="19.605" y="30.7178" width="5.08065" height="3.19355" rx="1.16129" fill="#969697" />
+            <rect x="30.7097" y="30.7178" width="5.08065" height="3.19355" rx="1.16129" fill="#969697" />
         </motion.svg>
     )
 }

@@ -7,7 +7,7 @@ import FactoryIconV2 from "./factoryV2";
 export default function FactoryPage() {
     return (
         <>
-            <div className="flex bg-zinc-200 min-h-screen w-full flex-col items-center justify-center overflow-x-hidden">
+            <div className="flex bg-zinc-100 min-h-screen w-full flex-col items-center justify-center overflow-x-hidden">
               
                 {/* <FactoryIconExp /> */}
 
