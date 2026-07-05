@@ -2,20 +2,24 @@
 
 import { animate, AnimatePresence, easeOut, motion, useAnimate, useMotionValue, useTransform } from "motion/react";
 import { useEffect } from "react";
+import FactoryIconV2 from "./factoryV2";
 
 export default function FactoryPage() {
     return (
         <>
             <div className="flex bg-zinc-200 min-h-screen w-full flex-col items-center justify-center overflow-x-hidden">
-                {/* <FactoryIcon /> */}
+              
+                {/* <FactoryIconExp /> */}
+
                 <FactoryIconV2 />
+
             </div>
         </>
     )
 }
 
 
-const FactoryIconV2 = () => {
+const FactoryIconExp = () => {
     const [scope, animate] = useAnimate();
 
     const CHIMNEY_PATHS = [
