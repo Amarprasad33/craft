@@ -1,11 +1,11 @@
-
+"use client"
 import { motion } from "motion/react"
 
 
 export default function LightBlubAnimation() {
   return (
     <div>
-      oi oi oi Blub
+      <BlubIcon />
     </div>
   )
 }

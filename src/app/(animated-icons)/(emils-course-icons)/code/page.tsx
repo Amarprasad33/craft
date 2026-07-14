@@ -1,11 +1,11 @@
-
+"use client"
 import { motion } from "motion/react"
 
 
 export default function CodeAnimation() {
     return (
-        <div>
-            oi oi oi code
+        <div className="bg-zinc-100 min-h-screen">
+            <CodeIcon />
         </div>
     )
 }
@@ -13,8 +13,8 @@ export default function CodeAnimation() {
 
 const CodeIcon = () => {
     return (
-        <motion.g
-    >
+      <svg>
+        <motion.g>
       <g className="will-change-transform">
         <g data-animate="whole">
           <g className="filter-[url(#filter8_i_359_1453)] dark:filter-[url(#filter8_i_368_1560)]">
@@ -50,7 +50,6 @@ const CodeIcon = () => {
               >
                 <motion.path
                   className="[--light-fill:#989898] [--dark-fill:#D6D6D6] dark:fill-(--dark-fill) fill-(--light-fill)"
-                  style={{ willChange: "d" }}
                 />
               </motion.g>
             </motion.g>
@@ -67,6 +66,7 @@ const CodeIcon = () => {
         </g>
       </g>
     </motion.g>
+    </svg>
     )
 }
 
