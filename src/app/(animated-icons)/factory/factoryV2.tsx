@@ -137,10 +137,18 @@ const FactoryIconV2 = () => {
             </AnimatePresence>
 
             <motion.path d={barPath} fill="#969697" />
+            <line x1="22.15" y1="27.85" x2="22.15" y2="29.786" stroke="#666666" strokeWidth="0.3" strokeLinecap="round"/>
+            <line x1="25.0174" y1="28.0062" x2="24.1992" y2="29.7609" stroke="#666666" strokeWidth="0.3" strokeLinecap="round"/>
+            <line x1="0.15" y1="-0.15" x2="2.08607" y2="-0.15" transform="matrix(0.422618 0.906308 0.906308 -0.422618 19.3999 27.8069)" stroke="#666666" strokeWidth="0.3" strokeLinecap="round"/>
+            <line x1="33.2501" y1="27.85" x2="33.2501" y2="29.786" stroke="#666666" strokeWidth="0.3" strokeLinecap="round"/>
+            <line x1="36.1175" y1="28.0062" x2="35.2993" y2="29.7609" stroke="#666666" strokeWidth="0.3" strokeLinecap="round"/>
+            <line x1="0.15" y1="-0.15" x2="2.08607" y2="-0.15" transform="matrix(0.422618 0.906308 0.906308 -0.422618 30.5 27.8069)" stroke="#666666" strokeWidth="0.3" strokeLinecap="round"/>
             <rect x="19.605" y="30.7178" width="5.08065" height="3.19355" rx="1.16129" fill="#969697" />
             <rect x="30.7097" y="30.7178" width="5.08065" height="3.19355" rx="1.16129" fill="#969697" />
         </motion.svg>
     )
 }
+
+
 
 export default FactoryIconV2;
