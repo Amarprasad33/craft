@@ -1,5 +1,5 @@
 "use client";
-
+import { useRef } from "react";
 import {
   motion,
   useAnimate,
@@ -20,8 +20,9 @@ export default function ClickAnimation() {
   const [scope, animate] = useAnimate();
   const handPathProgress = useMotionValue(0);
   const handPath = useTransform(handPathProgress, [0, 1], handPaths);
+  const hasAnimationCompletedRef = useRef(false);
 
-  const handleMouseEnter = () => {
+  const handleMouseEnter = async () => {
     animate(
       "[data-animate='background']",
       { transform: ["scale(1)", "scale(0.97)", "scale(1.01)", "scale(1)"] },
@@ -48,12 +49,6 @@ export default function ClickAnimation() {
       },
     );
 
-    animate(handPathProgress, [0, 1, 0], {
-      duration: 0.53,
-      times: [0.4, 0.6, 0.9],
-      ease: easeOut,
-    });
-
     scope.current.querySelectorAll("[data-animate='line']").forEach((line: any) => {
       const index = line.getAttribute("data-index");
       animate(
@@ -68,18 +63,71 @@ export default function ClickAnimation() {
         },
       );
     });
+
+    await animate(handPathProgress, [0, 1, 0], {
+      duration: 0.53,
+      times: [0.4, 0.6, 0.9],
+      ease: easeOut,
+    });
+
+    hasAnimationCompletedRef.current = true;
   };
 
-  const handleMouseLeave = () => {
+  const handleMouseLeave = async () => {
+    hasAnimationCompletedRef.current = false;
+
     animate("[data-animate='hand']", {
       transform: "translateX(0px) translateY(0px) rotate(0deg)",
     });
 
+    await Promise.all(
+      Array.from(scope.current.querySelectorAll("[data-animate='line']")).map(
+        (line: any) => {
+          const index = line.getAttribute("data-index");
+          return animate(line, {
+            strokeDashoffset: defaultStrokeDashoffsets[Number(index)],
+          });
+        },
+      ),
+    );
+  };
+
+  const handleClick = () => {
+    if (!hasAnimationCompletedRef.current) return;
+
+    animate(
+      "[data-animate='background']",
+      { transform: ["scale(1)", "scale(0.97)", "scale(1.01)", "scale(1)"] },
+      {
+        duration: 0.53,
+        times: [0.1, 0.3, 0.65, 1],
+        ease: easeOut,
+      },
+    );
+
+    animate("[data-animate='hand']", {
+      transform: "translateX(-4px) translateY(3px) rotate(25deg)",
+    });
+
+    animate(handPathProgress, [0, 1, 0], {
+      duration: 0.53,
+      times: [0.1, 0.3, 0.6],
+      ease: easeOut,
+    });
+
     scope.current.querySelectorAll("[data-animate='line']").forEach((line: any) => {
-      const index = line.getAttribute("data-index");
-      animate(line, {
-        strokeDashoffset: defaultStrokeDashoffsets[Number(index)],
-      });
+      const index = Number(line.getAttribute("data-index"));
+      animate(
+        line,
+        {
+          strokeDashoffset: index === 1 ? [1.05, 0] : [1.05, 0.4],
+        },
+        {
+          delay: index === 1 ? 0 : 0.04,
+          duration: 0.53,
+          times: [0.4, 0.6],
+        },
+      );
     });
   };
 
@@ -97,6 +145,7 @@ export default function ClickAnimation() {
           ref={scope}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
+          onClick={handleClick}
         >
           <motion.g
             data-animate="background"
