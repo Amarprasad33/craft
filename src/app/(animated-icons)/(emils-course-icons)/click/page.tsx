@@ -1,5 +1,6 @@
 "use client";
-import { useRef } from "react";
+
+import { useRef, useEffect } from "react";
 import {
   motion,
   useAnimate,
@@ -21,6 +22,58 @@ export default function ClickAnimation() {
   const handPathProgress = useMotionValue(0);
   const handPath = useTransform(handPathProgress, [0, 1], handPaths);
   const hasAnimationCompletedRef = useRef(false);
+
+  const startIdleAnimations = () => {
+    animate(
+      "[data-animate='background']",
+      { transform: ["scale(1)", "scale(0.97)", "scale(1.01)", "scale(1)"] },
+      {
+        duration: 0.63,
+        times: [0.2, 0.5, 0.85, 1],
+        ease: easeOut,
+        repeat: Infinity,
+        repeatType: "loop",
+        repeatDelay: 2,
+        delay: 2,
+      },
+    );
+
+    animate(handPathProgress, [0, 1, 0], {
+      duration: 0.63,
+      times: [0.1, 0.4, 0.8],
+      ease: easeOut,
+      repeat: Infinity,
+      repeatType: "loop",
+      repeatDelay: 2,
+      delay: 2,
+    });
+
+    scope.current.querySelectorAll("[data-animate='line']").forEach((line: any) => {
+      const index = Number(line.getAttribute("data-index"));
+      animate(
+        line,
+        {
+          strokeDashoffset: [
+            defaultStrokeDashoffsets[index],
+            1.05,
+            defaultStrokeDashoffsets[index],
+          ],
+        },
+        {
+          duration: 0.63,
+          times: [0.5, 0.5, 0.8],
+          repeat: Infinity,
+          repeatType: "loop",
+          repeatDelay: 2,
+          delay: 2,
+        },
+      );
+    });
+  };
+
+  useEffect(() => {
+    startIdleAnimations();
+  }, []);
 
   const handleMouseEnter = async () => {
     animate(
@@ -90,6 +143,8 @@ export default function ClickAnimation() {
         },
       ),
     );
+
+    startIdleAnimations();
   };
 
   const handleClick = () => {
