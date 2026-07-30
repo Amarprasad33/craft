@@ -1,11 +1,39 @@
-import { useAnimate } from "motion/react";
-import { useCallback } from "react";
+import {
+  useAnimate,
+  type AnimationPlaybackControlsWithThen,
+  type AnimationScope,
+  type DOMKeyframesDefinition,
+} from "motion/react";
+import { useCallback, type RefObject } from "react";
 
-export function useAnimateVariant() {
-  const [scope, animate] = useAnimate();
+export type ClickVariant = "initial" | "hover" | "idle" | "click";
 
-  const animateVariant = useCallback(
-    (selector: any, variant: any) => {
+export type PathConfig = {
+  keyframes: number[];
+  times: number[];
+  repeat?: boolean;
+};
+
+export type VariantDefinition = {
+  transition?: Record<string, unknown>;
+} & DOMKeyframesDefinition;
+
+type AnimateFunction = ReturnType<typeof useAnimate<SVGGElement>>[1];
+
+export type AnimateVariant = (
+  selector: string,
+  variant: VariantDefinition | null | undefined | false,
+) => AnimationPlaybackControlsWithThen | undefined;
+
+export function useAnimateVariant(): [
+  AnimationScope<SVGGElement>,
+  AnimateVariant,
+  AnimateFunction,
+] {
+  const [scope, animate] = useAnimate<SVGGElement>();
+
+  const animateVariant = useCallback<AnimateVariant>(
+    (selector, variant) => {
       if (!variant) return;
       const { transition, ...values } = variant;
       return animate(selector, values, transition ?? {
@@ -15,8 +43,10 @@ export function useAnimateVariant() {
         mass: 4,
       });
     },
-    [animate]
+    [animate],
   );
 
   return [scope, animateVariant, animate];
 }
+
+export type HandPathAnimationRef = RefObject<AnimationPlaybackControlsWithThen | null>;
