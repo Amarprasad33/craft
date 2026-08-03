@@ -7,7 +7,7 @@ import {
     useMotionValue,
     useTransform
 } from "motion/react";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 
 
@@ -27,9 +27,12 @@ const FactoryIconV2 = () => {
     const barProgress = useMotionValue(0);
     const barPath = useTransform(barProgress, [0, 1], [...CHIMNEY_PATHS]);
     const controls: AnimationPlaybackControls[] = [];
+    const stopSteamControls: AnimationPlaybackControls[] = [];
+    const hoverAnimationCompleted = useRef(true);
 
 
-    const animateSteam = () => {
+    const animateSteam = async () => {
+        hoverAnimationCompleted.current = false;
         animate(barProgress, [0, 1, 0], {
             ease: easeOut,
             duration: 1.6,
@@ -61,10 +64,13 @@ const FactoryIconV2 = () => {
                 )
 
             });
-        
+        await Promise.all(controls);
+        // console.log("done")
+        hoverAnimationCompleted.current = true;
     };
 
     const handleClickAnimations = () => {
+        
         scope.current?.querySelectorAll("[data-animate='ray']")
             .forEach((line: SVGLineElement, index: number) => {
 
@@ -75,7 +81,7 @@ const FactoryIconV2 = () => {
                             strokeDashoffset: ["0px", "-2.8px", "0px"],
                         },
                         {
-                            duration: 0.5,
+                            duration: 0.3,
                             ease: easeOut,
                             // repeat: Infinity,
                             // repeatDelay: 1.92,
@@ -86,32 +92,72 @@ const FactoryIconV2 = () => {
             });
     }
 
-    const stopSteam = () => {
+    const stopSteam = async () => {
         controls.forEach(control => control.stop());
-
+        // console.log("hoverRemove")
         scope.current
             ?.querySelectorAll("[data-animate='line']").forEach((line: SVGPathElement, index: number) => {
-                animate(
-                    line,
-                    { strokeDashoffset: `${lineOffsets[index].start}px` },
-                    { duration: 0 }
-                );
+                stopSteamControls.push(
+                    animate(
+                        line,
+                        { strokeDashoffset: `${lineOffsets[index].end}px` },
+                        { duration: 0.5 }
+                    )
+                )
             });
-        animate(barProgress, 0, {
+        await animate(barProgress, 0, {
             ease: easeOut,
             duration: 1.6,
             times: [0, 0.32, 0.9]
         });
+        await Promise.all(stopSteamControls);
+        hoverAnimationCompleted.current = true;
+        // console.log('hover DONEEEE')
+        setTimeout(() =>  IdleAnimationSequence(), 4000);
     };
 
+    const lineOffsetsOnIdle = [
+        { start: 8, end: -8, duration: 1, delay: 0.4 },
+        { start: 10, end: -10, duration: 1, delay: 0.6 },
+        { start: 8, end: -8, duration: 1, delay: 0.78 },
+    ];
+
+    const IdleAnimationSequence = () => {
+        if(!hoverAnimationCompleted.current) return;
+        animate(barProgress, [0, 1, 0], {
+            ease: easeOut,
+            duration: 1.6,
+            times: [0, 0.32, 0.9],
+            repeat: Infinity,
+            repeatDelay: 5.2
+        });
+
+        scope.current?.querySelectorAll("[data-animate='line']")
+            .forEach((line: SVGPathElement, index: number) => {
+
+                const { start, end, duration, delay } = lineOffsetsOnIdle[index];
+
+                controls.push(
+                    animate(
+                        line,
+                        {
+                            strokeDashoffset: [`${start}px`, "0px", `${end}px`],
+                        },
+                        {
+                            duration,
+                            delay,
+                            ease: easeOut,
+                            repeat: Infinity,
+                            repeatDelay: 5.8,
+                        }
+                    )
+                )
+
+            });
+    }
+
     useEffect(() => {
-        // animate(barProgress, [0, 1, 0], {
-        //     ease: easeOut,
-        //     duration: 1.6,
-        //     times: [0, 0.32, 0.9],
-        //     repeat: Infinity,
-        //     repeatDelay: 1.2
-        // });
+        IdleAnimationSequence();
     }, []);
 
     return (
