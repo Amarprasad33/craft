@@ -34,13 +34,12 @@ const FactoryIconV2 = () => {
             ease: easeOut,
             duration: 1.6,
             times: [0, 0.32, 0.9],
-            repeat: Infinity,
-            repeatDelay: 1.2
+            // repeat: Infinity,
+            // repeatDelay: 1.2
         });
         controls.length = 0;
 
-        scope.current
-            ?.querySelectorAll("[data-animate='line']")
+        scope.current?.querySelectorAll("[data-animate='line']")
             .forEach((line: SVGPathElement, index: number) => {
 
                 const { start, end, duration, delay } = lineOffsets[index];
@@ -55,8 +54,8 @@ const FactoryIconV2 = () => {
                             duration,
                             delay,
                             ease: easeOut,
-                            repeat: Infinity,
-                            repeatDelay: 1.92,
+                            // repeat: Infinity,
+                            // repeatDelay: 1.92,
                         }
                     )
                 )
@@ -64,6 +63,28 @@ const FactoryIconV2 = () => {
             });
         
     };
+
+    const handleClickAnimations = () => {
+        scope.current?.querySelectorAll("[data-animate='ray']")
+            .forEach((line: SVGLineElement, index: number) => {
+
+                controls.push(
+                    animate(
+                        line,
+                        {
+                            strokeDashoffset: ["0px", "-2.8px", "0px"],
+                        },
+                        {
+                            duration: 0.5,
+                            ease: easeOut,
+                            // repeat: Infinity,
+                            // repeatDelay: 1.92,
+                        }
+                    )
+                )
+
+            });
+    }
 
     const stopSteam = () => {
         controls.forEach(control => control.stop());
@@ -94,9 +115,10 @@ const FactoryIconV2 = () => {
     }, []);
 
     return (
-        <motion.svg width="43" height="43" viewBox="0 0 43 43" fill="none" xmlns="http://www.w3.org/2000/svg" 
+        <motion.svg width="43" height="43" style={{ scale: 2 }} viewBox="0 0 43 43" fill="none" xmlns="http://www.w3.org/2000/svg" 
             onHoverStart={animateSteam}
             onHoverEnd={stopSteam}
+            onClick={handleClickAnimations}
         >
             <path d="M25.8418 24.8776C25.5105 25.6338 26.4045 26.3341 27.0593 25.8313L36.7029 18.4268C37.0634 18.15 37.5052 18 37.9597 18C38.9217 18 39.7016 18.7799 39.7016 19.7419V37.2339C39.7016 38.1959 38.9217 38.9758 37.9597 38.9758H10.7419C9.77989 38.9758 9 38.1959 9 37.2339V34.8866C9 33.0878 10.4955 31.6504 11.7798 30.3909L23.9542 18.6192C24.365 18.222 24.914 18 25.4854 18C27.0745 18 28.1408 19.6314 27.503 21.0869L25.8418 24.8776Z" fill="#D1D2D4" />
             <AnimatePresence mode="popLayout">
@@ -133,18 +155,24 @@ const FactoryIconV2 = () => {
 
                     />
 
+
+                    <motion.line data-animate="ray" strokeDasharray="2.24px 3px" strokeDashoffset="0px" x1="22.25" y1="27.95" x2="22.25" y2="29.686" stroke="#666666" strokeWidth="0.5" strokeLinecap="round"/>
+                    <motion.line data-animate="ray" strokeDasharray="2.24px 3px" strokeDashoffset="0px" x1="25.0657" y1="28.1391" x2="24.3321" y2="29.7125" stroke="#666666" strokeWidth="0.5" strokeLinecap="round"/>
+                    <motion.line data-animate="ray" strokeDasharray="2.24px 3px" strokeDashoffset="0px" x1="0.25" y1="-0.25" x2="1.98607" y2="-0.25" transform="matrix(0.422618 0.906308 0.906308 -0.422618 19.3999 27.8069)" stroke="#666666" strokeWidth="0.5" strokeLinecap="round"/>
+                    <motion.line data-animate="ray" strokeDasharray="2.24px 3px" strokeDashoffset="0px" x1="33.3501" y1="27.95" x2="33.3501" y2="29.686" stroke="#666666" strokeWidth="0.5" strokeLinecap="round"/>
+                    <motion.line data-animate="ray" strokeDasharray="2.24px 3px" strokeDashoffset="0px" x1="36.1658" y1="28.1391" x2="35.4322" y2="29.7125" stroke="#666666" strokeWidth="0.5" strokeLinecap="round"/>
+                    <motion.line data-animate="ray" strokeDasharray="2.24px 3px" strokeDashoffset="0px" x1="0.25" y1="-0.25" x2="1.98607" y2="-0.25" transform="matrix(0.422618 0.906308 0.906308 -0.422618 30.5 27.8069)" stroke="#666666" strokeWidth="0.5" strokeLinecap="round"/>
+
+
+                    <rect x="19.605" y="30.7178" width="5.08065" height="3.19355" rx="1.16129" fill="#969697" />
+                    <rect x="30.7097" y="30.7178" width="5.08065" height="3.19355" rx="1.16129" fill="#969697" />
+
                 </motion.g>
             </AnimatePresence>
 
             <motion.path d={barPath} fill="#969697" />
-            <line x1="22.15" y1="27.85" x2="22.15" y2="29.786" stroke="#666666" strokeWidth="0.3" strokeLinecap="round"/>
-            <line x1="25.0174" y1="28.0062" x2="24.1992" y2="29.7609" stroke="#666666" strokeWidth="0.3" strokeLinecap="round"/>
-            <line x1="0.15" y1="-0.15" x2="2.08607" y2="-0.15" transform="matrix(0.422618 0.906308 0.906308 -0.422618 19.3999 27.8069)" stroke="#666666" strokeWidth="0.3" strokeLinecap="round"/>
-            <line x1="33.2501" y1="27.85" x2="33.2501" y2="29.786" stroke="#666666" strokeWidth="0.3" strokeLinecap="round"/>
-            <line x1="36.1175" y1="28.0062" x2="35.2993" y2="29.7609" stroke="#666666" strokeWidth="0.3" strokeLinecap="round"/>
-            <line x1="0.15" y1="-0.15" x2="2.08607" y2="-0.15" transform="matrix(0.422618 0.906308 0.906308 -0.422618 30.5 27.8069)" stroke="#666666" strokeWidth="0.3" strokeLinecap="round"/>
-            <rect x="19.605" y="30.7178" width="5.08065" height="3.19355" rx="1.16129" fill="#969697" />
-            <rect x="30.7097" y="30.7178" width="5.08065" height="3.19355" rx="1.16129" fill="#969697" />
+
+
         </motion.svg>
     )
 }
