@@ -22,7 +22,7 @@ const BlubIcon = () => {
     animate: {
       transform: ["scale(1)", "scale(0.985)", "scale(1.02)", "scale(1)"],
       transition: {
-        duration: 0.5,
+        duration: 0.7,
         times: [0, 0.25, 0.6, 1],
         ease: "easeInOut",
       },
@@ -30,12 +30,30 @@ const BlubIcon = () => {
     click: {
       transform: ["scale(1)", "scale(0.985)", "scale(1.02)", "scale(1)"],
       transition: {
-        duration: 0.5,
+        duration: 0.7,
         times: [0, 0.25, 0.6, 1],
         ease: "easeInOut",
       },
     },
   };
+  const maskPillVariants = {
+    initial: {
+      transform: "translateX(0%) translateY(-1%) rotate(0deg)"
+    },
+    animate: {
+      transform: [
+        "translateX(0%) translateY(-1%) rotate(0deg)",
+        "translateX(0%) translateY(-20%) rotate(3deg)",
+        "translateX(0%) translateY(-1%) rotate(0deg)",
+      ],
+      transition: {
+        duration: 0.7,
+        times: [0, 0.3, 1],
+        ease: "easeInOut",
+      },
+    },
+
+  }
 
 
   const handleMouseEnter = () => {
@@ -44,22 +62,28 @@ const BlubIcon = () => {
       backgroundVariants.animate
     )
 
-    scope.current?.querySelectorAll("[data-animate='line']")
-    .forEach((line: SVGLineElement, index: number) => {
+    const lineOffsets = [8, 9, 13, 9, 8];
 
-        controls.push(
-            animate(
-                line,
-                {
-                    strokeDashoffset: ["0px", "8px", "0px"],
-                },
-                {
-                    duration: 0.4,
-                    ease: easeOut
-                }
-            )
-        )
+    scope.current?.querySelectorAll("[data-animate='line']").forEach((line: SVGLineElement, index: number) => {
+      controls.push(
+          animate(
+              line,
+              {
+                  strokeDashoffset: ["0px", `${lineOffsets[index]}px`, "0px"],
+              },
+              {
+                duration: 0.7,
+                times: [0, 0.25, 1],
+                ease: easeOut
+              }
+          )
+      )
     });
+
+    animate(
+      "[data-animate='pill']",
+      maskPillVariants.animate
+    )
   }
   const handleMouseLeave = () => {
 
@@ -75,7 +99,13 @@ const BlubIcon = () => {
         <g clipPath="url(#clip-pill)">
           <mask id="pill-mask" style={{ maskType: "luminance" }} maskUnits="userSpaceOnUse" x="0" y="0" width="199" height="129">
             <rect width="199" height="129" fill="white" />
-            <path d="M93.0077 70.8751C93.6289 70.3273 94.5769 70.3868 95.1249 71.0079C96.8226 72.9317 100.55 73.1028 102.992 70.8888C103.606 70.3324 104.555 70.3787 105.111 70.9923C105.668 71.606 105.621 72.555 105.008 73.1115C101.568 76.2305 95.8832 76.4016 92.8749 72.9923C92.3271 72.3711 92.3866 71.4232 93.0077 70.8751Z" fill="black" />
+            <motion.path 
+              data-animate="pill"
+              initial={maskPillVariants.initial}
+              style={{ transformOrigin: "center" }} 
+              d="M93.0077 70.8751C93.6289 70.3273 94.5769 70.3868 95.1249 71.0079C96.8226 72.9317 100.55 73.1028 102.992 70.8888C103.606 70.3324 104.555 70.3787 105.111 70.9923C105.668 71.606 105.621 72.555 105.008 73.1115C101.568 76.2305 95.8832 76.4016 92.8749 72.9923C92.3271 72.3711 92.3866 71.4232 93.0077 70.8751Z" 
+              fill="black" 
+            />
           </mask>
           <g mask="url(#pill-mask)">
             <motion.g
@@ -86,11 +116,11 @@ const BlubIcon = () => {
             </motion.g>
             <path d="M109.181 60.4605C107.372 57.4701 106.615 54.7214 106.41 52.8986C106.265 51.6071 106.003 50.0158 104.936 49.254C101.425 46.7479 96.6127 47.4372 93.9361 49.0107C93.0261 49.5457 92.6892 50.6102 92.5555 51.654C92.3241 53.4604 91.6972 55.3299 91.2244 56.4821C91.0711 56.8556 90.8542 57.198 90.6015 57.5132C88.6979 59.8871 86.5485 62.8158 87 67.4995C87.6747 74.499 92.8878 77.0626 97.2085 77.7952C99.4941 78.1827 101.847 77.7764 103.904 76.7406C110.728 73.3032 113.073 66.8941 109.181 60.4605Z" fill="#8D8D8D" stroke="#F3F3F3" />
             <path d="M93.7527 47.6851C98.4462 45.6702 102.311 46.4232 104.431 47.4275C105.034 47.713 105.823 47.4845 105.967 46.8422C107.926 38.0801 90.1416 38.9193 92.4267 47.1325C92.5805 47.6854 93.2243 47.9119 93.7527 47.6851Z" fill="#8D8D8D" stroke="#F3F3F3" />
-            <line data-animate="line" strokeDasharray="6px 7px" strokeDashoffset="0px" x1="115.121" y1="75" x2="117.243" y2="77.1213" stroke="#CECECE" strokeWidth="3" strokeLinecap="round" />
-            <line data-animate="line" strokeDasharray="7px 8px" strokeDashoffset="0px" x1="108.993" y1="80.7255" x2="110.684" y2="84.3508" stroke="#CECECE" strokeWidth="3" strokeLinecap="round" />
-            <line data-animate="line" strokeDasharray="10px 11px" strokeDashoffset="0px" x1="99.5" y1="83.5" x2="99.5" y2="90.5" stroke="#CECECE" strokeWidth="3" strokeLinecap="round" />
-            <line data-animate="line" strokeDasharray="7px 8px" strokeDashoffset="0px" x1="1.5" y1="-1.5" x2="5.5" y2="-1.5" transform="matrix(-0.422618 0.906308 0.906308 0.422618 91.958 80)" stroke="#CECECE" strokeWidth="3" strokeLinecap="round" />
-            <line data-animate="line" strokeDasharray="6px 7px" strokeDashoffset="0px" x1="1.5" y1="-1.5" x2="4.5" y2="-1.5" transform="matrix(-0.707107 0.707107 0.707107 0.707107 85.2427 75)" stroke="#CECECE" strokeWidth="3" strokeLinecap="round" />
+            <motion.line data-animate="line" strokeDasharray="6px 7px" strokeDashoffset="0px" x1="115.121" y1="75" x2="117.243" y2="77.1213" stroke="#CECECE" strokeWidth="3" strokeLinecap="round" />
+            <motion.line data-animate="line" strokeDasharray="7px 8px" strokeDashoffset="0px" x1="108.993" y1="80.7255" x2="110.684" y2="84.3508" stroke="#CECECE" strokeWidth="3" strokeLinecap="round" />
+            <motion.line data-animate="line" strokeDasharray="10px 11px" strokeDashoffset="0px" x1="99.5" y1="83.5" x2="99.5" y2="90.5" stroke="#CECECE" strokeWidth="3" strokeLinecap="round" />
+            <motion.line data-animate="line" strokeDasharray="7px 8px" strokeDashoffset="0px" x1="1.5" y1="-1.5" x2="5.5" y2="-1.5" transform="matrix(-0.422618 0.906308 0.906308 0.422618 91.958 80)" stroke="#CECECE" strokeWidth="3" strokeLinecap="round" />
+            <motion.line data-animate="line" strokeDasharray="6px 7px" strokeDashoffset="0px" x1="1.5" y1="-1.5" x2="4.5" y2="-1.5" transform="matrix(-0.707107 0.707107 0.707107 0.707107 85.2427 75)" stroke="#CECECE" strokeWidth="3" strokeLinecap="round" />
           </g>
         </g>
         <defs>
