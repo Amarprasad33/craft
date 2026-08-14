@@ -1,5 +1,7 @@
 "use client"
+import { useHoverTimeout } from "@/lib/hooks/use-hover-timeout";
 import { AnimationPlaybackControls, easeOut, motion, useAnimate, Variants } from "motion/react"
+import { useRef } from "react";
 
 
 export default function LightBlubAnimation() {
@@ -14,6 +16,9 @@ export default function LightBlubAnimation() {
 const BlubIcon = () => {
   const [scope, animate] = useAnimate();
   const controls: AnimationPlaybackControls[] = [];
+  const hoverDisabledRef = useRef(false);
+  const animationCompletedRef = useRef(false);
+  const hoverAnimationOngoing = useRef(false);
 
   const backgroundVariants = {
     initial: {
@@ -55,39 +60,50 @@ const BlubIcon = () => {
 
   }
 
-
-  const handleMouseEnter = () => {
-    animate(
-      '[data-animate="background"]',
-      backgroundVariants.animate
-    )
-
-    const lineOffsets = [8, 9, 13, 9, 8];
-
-    scope.current?.querySelectorAll("[data-animate='line']").forEach((line: SVGLineElement, index: number) => {
+  const { handleMouseEnter, handleMouseLeave } = useHoverTimeout({
+    delay: 100,
+    disabledRef: hoverDisabledRef,
+    onHoverStart: async () => {
+      if(hoverAnimationOngoing.current) return;
+      console.log("hover call")
+      hoverAnimationOngoing.current = true;
       controls.push(
-          animate(
-              line,
-              {
-                  strokeDashoffset: ["0px", `${lineOffsets[index]}px`, "0px"],
-              },
-              {
-                duration: 0.7,
-                times: [0, 0.25, 1],
-                ease: easeOut
-              }
-          )
+        animate(
+          '[data-animate="background"]',
+          backgroundVariants.animate
+        )
       )
-    });
+  
+      const lineOffsets = [8, 9, 13, 9, 8];
+  
+      scope.current?.querySelectorAll("[data-animate='line']").forEach((line: SVGLineElement, index: number) => {
+        controls.push(
+          animate(
+            line,
+            {
+                strokeDashoffset: ["0px", `${lineOffsets[index]}px`, "0px"],
+            },
+            {
+              duration: 0.7,
+              times: [0, 0.25, 1],
+              ease: easeOut
+            }
+          )
+        )
+      });
+  
+      controls.push(
+        animate(
+          "[data-animate='pill']",
+          maskPillVariants.animate
+        )
+      )
+      await Promise.all(controls);
+      hoverAnimationOngoing.current = false;
+    },
+    onHoverEnd: () => {}
+  })
 
-    animate(
-      "[data-animate='pill']",
-      maskPillVariants.animate
-    )
-  }
-  const handleMouseLeave = () => {
-
-  }
 
   return (
     <svg width="199" height="129" viewBox="0 0 199 129" fill="none" xmlns="http://www.w3.org/2000/svg">
