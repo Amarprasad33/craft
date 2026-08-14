@@ -31,7 +31,7 @@ const BlubIcon = () => {
       transform: ["scale(1)", "scale(0.985)", "scale(1.02)", "scale(1)"],
       transition: {
         duration: 0.7,
-        times: [0, 0.25, 0.6, 1],
+        times: [0, 0.35, 0.6, 1],
         ease: "easeInOut",
       },
     },
@@ -91,12 +91,11 @@ const BlubIcon = () => {
 
   return (
     <svg width="199" height="129" viewBox="0 0 199 129" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <motion.g
-        ref={scope}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-      >
-        <g clipPath="url(#clip-pill)">
+        <g clipPath="url(#clip-pill)"
+          ref={scope}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        >
           <mask id="pill-mask" style={{ maskType: "luminance" }} maskUnits="userSpaceOnUse" x="0" y="0" width="199" height="129">
             <rect width="199" height="129" fill="white" />
             <motion.path 
@@ -128,7 +127,6 @@ const BlubIcon = () => {
             <rect width="199" height="129" fill="white" />
           </clipPath>
         </defs>
-      </motion.g>
     </svg>
   )
 }
