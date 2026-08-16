@@ -15,10 +15,10 @@ export default function LightBlubAnimation() {
 
 const BlubIcon = () => {
   const [scope, animate] = useAnimate();
-  const controls: AnimationPlaybackControls[] = [];
   const hoverDisabledRef = useRef(false);
   const animationCompletedRef = useRef(false);
   const hoverAnimationOngoing = useRef(false);
+  const animationControlsRef = useRef<AnimationPlaybackControls[]>([]);
 
   const wholeVariants = {
     initial: {
@@ -27,9 +27,9 @@ const BlubIcon = () => {
     hover: {
       transform: [
         "translateY(0px) rotate(0deg) scale(1)",
-        "translateY(-6%) rotate(-1.5deg) scale(0.99)",
-        "translateY(8%) rotate(2.5deg) scale(1.02)",
-        "translateY(6%) rotate(1.5deg) scale(1)",
+        "translateY(-6%) rotate(0deg) scale(0.99)",
+        "translateY(8%) rotate(0.5deg) scale(1.02)",
+        "translateY(6%) rotate(0.5deg) scale(1)",
       ],
       transition: {
         duration: 0.7,
@@ -117,6 +117,7 @@ const BlubIcon = () => {
   const stemVariants = {
     initial: {
       opacity: 1,
+      transform:  "translateY(0%) translateX(0%)"
     },
     hover: {
       opacity: [0.3, 0.3, 1],
@@ -174,9 +175,11 @@ const BlubIcon = () => {
     delay: 100,
     disabledRef: hoverDisabledRef,
     onHoverStart: async () => {
-      if(hoverAnimationOngoing.current) return;
       console.log("hover call")
-      hoverAnimationOngoing.current = true;
+      // Cancel any previous animation
+      animationControlsRef.current.forEach(control => control.stop());
+      animationControlsRef.current = [];
+      const controls: AnimationPlaybackControls[] = [];
 
       const lineOffsets = [8, 9, 13, 9, 8];
   
@@ -233,19 +236,55 @@ const BlubIcon = () => {
           maskPillVariants.hover
         )
       )
+      animationControlsRef.current = controls;
+
+
       await Promise.all(controls);
-      hoverAnimationOngoing.current = false;
+
     },
     onHoverEnd: () => {
+      animationControlsRef.current.forEach(control => control.stop());
+      animationControlsRef.current = []; 
+
+      // Reset everything
       animate(
         '[data-animate="whole"]',
         wholeVariants.initial
-      )
-    
+      );
+
+      animate(
+        '[data-animate="bulb"]',
+        bulbVariants.initial
+      );
+
+      animate(
+        '[data-animate="stem"]',
+        stemVariants.initial
+      );
+
+      animate(
+        '[data-animate="background"]',
+        backgroundVariants.initial
+      );
+
       animate(
         "[data-animate='pill']",
         maskPillVariants.initial
-      )
+      );
+
+      scope.current
+        ?.querySelectorAll("[data-animate='line']")
+        .forEach((line: SVGLineElement) => {
+          animate(
+            line,
+            {
+              strokeDashoffset: "0px",
+            },
+            {
+              duration: 0.15,
+            }
+          );
+        });
       
     }
   })
