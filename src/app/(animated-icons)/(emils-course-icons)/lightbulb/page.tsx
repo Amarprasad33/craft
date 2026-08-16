@@ -122,12 +122,13 @@ const BlubIcon = () => {
     hover: {
       opacity: [0.3, 0.3, 1],
       transform: [
-        "translateY(0%) translateX(0%)",
-        "translateY(-60%) translateX(3%)",
-        "translateY(0%) translateX(0%)",
+        "translateY(0%) translateX(0%) rotate(0deg)",
+        "translateY(-60%) translateX(3%) rotate(5deg)",
+        "translateY(0%) translateX(0%) rotate(0deg)",
       ],
       transition: {
         duration: 0.7,
+        ease: easeOut,
         times: [0.2, 0.45, 0.6],
       },
     },
@@ -291,7 +292,7 @@ const BlubIcon = () => {
 
 
   return (
-    <svg width="199" height="129" viewBox="0 0 199 129" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width="199" height="129" style={{ transform: 'rotate(45deg)' }} viewBox="0 0 199 129" fill="none" xmlns="http://www.w3.org/2000/svg">
         <g clipPath="url(#clip-pill)"
           ref={scope}
           onMouseEnter={handleMouseEnter}
