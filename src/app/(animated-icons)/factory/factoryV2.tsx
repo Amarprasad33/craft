@@ -162,8 +162,8 @@ const FactoryIconV2 = () => {
 
     return (
         <motion.svg width="43" height="43" style={{ scale: 2 }} viewBox="0 0 43 43" fill="none" xmlns="http://www.w3.org/2000/svg" 
-            onHoverStart={animateSteam}
-            onHoverEnd={stopSteam}
+            onMouseEnter={animateSteam}
+            onMouseLeave={stopSteam}
             onClick={handleClickAnimations}
         >
             <path d="M25.8418 24.8776C25.5105 25.6338 26.4045 26.3341 27.0593 25.8313L36.7029 18.4268C37.0634 18.15 37.5052 18 37.9597 18C38.9217 18 39.7016 18.7799 39.7016 19.7419V37.2339C39.7016 38.1959 38.9217 38.9758 37.9597 38.9758H10.7419C9.77989 38.9758 9 38.1959 9 37.2339V34.8866C9 33.0878 10.4955 31.6504 11.7798 30.3909L23.9542 18.6192C24.365 18.222 24.914 18 25.4854 18C27.0745 18 28.1408 19.6314 27.503 21.0869L25.8418 24.8776Z" fill="#D1D2D4" />
