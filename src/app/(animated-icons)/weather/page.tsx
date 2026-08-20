@@ -1,5 +1,7 @@
 "use client"
-import {easeOut, motion, useAnimate} from 'motion/react'
+import { useHoverTimeout } from '@/lib/hooks/use-hover-timeout'
+import {AnimationPlaybackControls, easeOut, motion, useAnimate} from 'motion/react'
+import { useCallback, useRef } from 'react'
 
 export default function WeatherPage() {
     return (
@@ -19,58 +21,103 @@ const sunVariants = {
 
 const WeatherIcon = () => {
     const [scope, animate] = useAnimate();
+    const animationControlsRef = useRef<AnimationPlaybackControls[]>([]);
+    const rainAnimationIdRef = useRef(0);
+    const hoverDisabledRef = useRef(false);
+    const isHoveringRef = useRef(false);
 
 
-    const temppraryHoverHandler = () => {
-        scope.current?.querySelectorAll("[data-animate='drop']")
-            .forEach((line: SVGLineElement, index: number) => {
+    
 
-                // controls.push(
-                    animate(
-                        line,
-                        {
-                            strokeDashoffset: ["7px", "0px", "-7px"],
-                        },
-                        {
-                            duration: 0.7,
-                            ease: easeOut,
-                            delay: index * 0.05,
-                            repeat: Infinity,
-                            repeatDelay: 0.6
-                        }
-                    )
-                // )
 
+    const animateRain = useCallback(async () => {
+      
+        const lines: SVGLineElement[] = Array.from(
+          scope.current?.querySelectorAll(
+            "[data-animate='drop']"
+          ) ?? []
+        );
+      
+        if (!lines.length) return;
+      
+        while (isHoveringRef.current) {
+             // Shuffle all drops
+            const shuffled = [...lines].sort(() => Math.random() - 0.5);
+      
+            // Pick 4–8 drops for this "moment" of rain
+            //   const count = Math.floor(Math.random() * 5) + 4;
+            // For more sparse Rain
+            const count = Math.floor(Math.random() * 4) + 2;
+        
+            const selected = shuffled.slice(0, count);
+        
+            const controls = selected.map((line) =>
+                animate(
+                    line,
+                    {
+                        strokeDashoffset: ["7px", "0px", "-7px"],
+                    },
+                    {
+                        duration: 0.6 + Math.random() * 0.3,
+                        ease: easeOut,
+                        delay: Math.random() * 0.6,
+                    }
+                )
+            );
+        
+            // Keep these so onHoverEnd can stop them immediately
+            // animationControlsRef.current.push(...controls);
+
+            // IMPORTANT:
+            // Don't check isHoveringRef here and cancel.
+            // Let the current drops finish.
+            await Promise.all(controls);
+        
+            // NOW check whether we should create another rain burst
+            if (!isHoveringRef.current) {
+                break;
+            }
+        
+            // Random gap between rain bursts
+            await new Promise((resolve) =>
+                setTimeout(resolve, 350 + Math.random() * 800)
+            );
+        }
+    }, [animate, scope]);
+
+    const { handleMouseEnter, handleMouseLeave } = useHoverTimeout({
+        delay: 100,
+        disabledRef: hoverDisabledRef,
+        onHoverStart: () => {
+            console.log("hover call");
+
+            // Cancel previous animations
+            animationControlsRef.current.forEach((control) => control.stop());
+            animationControlsRef.current = [];
+            isHoveringRef.current = true;
+
+            // Start the random rain
+            animateRain();
+        },
+        onHoverEnd: () => {
+            // Invalidate the current rain loop
+            isHoveringRef.current = false;
+            
+            animationControlsRef.current.forEach((control) => {
+                control.stop();
             });
-    }
-    const temporaryLeaveHandler = () => {
-        scope.current?.querySelectorAll("[data-animate='drop']")
-            .forEach((line: SVGLineElement, index: number) => {
 
-                // controls.push(
-                    animate(
-                        line,
-                        {
-                            strokeDashoffset: ["7px"],
-                        },
-                        {
-                            duration: 0.7,
-                            ease: easeOut,
-                            delay: index * 0.03
-                        }
-                    )
-                // )
-
-            });
-    }
+            animationControlsRef.current = [];
+        }
+    })
 
 
     return (
         <svg width="188" height="168" viewBox="0 0 188 168" fill="none" xmlns="http://www.w3.org/2000/svg">
             <g 
                 ref={scope}
-                onMouseEnter={temppraryHoverHandler}
-                onMouseLeave={temporaryLeaveHandler}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
             >
                 <ellipse cx="93.8731" cy="83.9638" rx="78" ry="53" transform="rotate(28.7234 93.8731 83.9638)" fill="#F3F3F3"/>
                 <motion.g initial={sunVariants.initial} data-animate="sun">
