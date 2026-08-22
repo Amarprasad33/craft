@@ -1,4 +1,5 @@
 "use client"
+import { ClickVariant, useAnimateVariant } from "@/lib/hooks/use-animate-variant";
 import { useHoverTimeout } from "@/lib/hooks/use-hover-timeout";
 import { AnimationPlaybackControls, easeOut, motion, useAnimate, Variants } from "motion/react"
 import { useRef } from "react";
@@ -14,11 +15,12 @@ export default function LightBlubAnimation() {
 
 
 const BlubIcon = () => {
-  const [scope, animate] = useAnimate();
+  // const [scope, animate] = useAnimate();
   const hoverDisabledRef = useRef(false);
   const animationCompletedRef = useRef(false);
   const hoverAnimationOngoing = useRef(false);
   const animationControlsRef = useRef<AnimationPlaybackControls[]>([]);
+  const [scope, animateVariant, animate] = useAnimateVariant();
 
   const wholeVariants = {
     initial: {
@@ -160,11 +162,11 @@ const BlubIcon = () => {
         "translateX(0%) translateY(-1%) rotate(0deg)",
         "translateX(0%) translateY(-40%) rotate(3deg)",
         "translateX(0%) translateY(-1%) rotate(0deg)",
-        // "translateX(0%) translateY(30%) rotate(0deg)",
+        "translateX(0%) translateY(30%) rotate(0deg)",
       ],
       transition: {
-        duration: 0.7,
-        times: [0, 0.4, 1],
+        duration: 0.5,
+        times: [0, 0.4, 0.5, 1],
         ease: "easeInOut",
       },
     },
@@ -184,7 +186,7 @@ const BlubIcon = () => {
 
       const lineOffsets = [8, 9, 13, 9, 8];
   
-      scope.current?.querySelectorAll("[data-animate='line']").forEach((line: SVGLineElement, index: number) => {
+      scope.current?.querySelectorAll("[data-animate='line']").forEach((line, index: number) => {
         controls.push(
           animate(
             line,
@@ -200,43 +202,38 @@ const BlubIcon = () => {
         )
       });
 
-      controls.push(
-        animate(
-          '[data-animate="whole"]',
-          wholeVariants.hover
-        )
+      const wholeControl = animateVariant(
+        '[data-animate="whole"]',
+        wholeVariants.hover
       )
 
-      controls.push(
-        animate(
-          '[data-animate="bulb"]',
-          bulbVariants.hover
-        )
-      )
+      if(wholeControl) controls.push(wholeControl);
 
-      controls.push(
-        animate(
-          '[data-animate="stem"]',
-          stemVariants.hover
-        )
+      const bulbControl = animateVariant(
+        '[data-animate="bulb"]',
+        bulbVariants.hover
       )
+      if(bulbControl) controls.push(bulbControl);
+
+      const stemControl = animateVariant(
+        '[data-animate="stem"]',
+        stemVariants.hover
+      )
+      if(stemControl) controls.push(stemControl);
+      
+      const bgControl =  animateVariant(
+        '[data-animate="background"]',
+        backgroundVariants.hover
+      )
+      if(bgControl) controls.push(bgControl);
+      
+      const pillControl = animateVariant(
+        "[data-animate='pill']",
+        maskPillVariants.hover
+      )
+      if(pillControl) controls.push(pillControl);
 
 
-      controls.push(
-        animate(
-          '[data-animate="background"]',
-          backgroundVariants.hover
-        )
-      )
-  
-     
-  
-      controls.push(
-        animate(
-          "[data-animate='pill']",
-          maskPillVariants.hover
-        )
-      )
       animationControlsRef.current = controls;
 
 
@@ -248,34 +245,34 @@ const BlubIcon = () => {
       animationControlsRef.current = []; 
 
       // Reset everything
-      animate(
+      animateVariant(
         '[data-animate="whole"]',
         wholeVariants.initial
       );
 
-      animate(
+      animateVariant(
         '[data-animate="bulb"]',
         bulbVariants.initial
       );
 
-      animate(
+      animateVariant(
         '[data-animate="stem"]',
         stemVariants.initial
       );
 
-      animate(
+      animateVariant(
         '[data-animate="background"]',
         backgroundVariants.initial
       );
 
-      animate(
+      animateVariant(
         "[data-animate='pill']",
         maskPillVariants.initial
       );
 
       scope.current
         ?.querySelectorAll("[data-animate='line']")
-        .forEach((line: SVGLineElement) => {
+        .forEach((line) => {
           animate(
             line,
             {
