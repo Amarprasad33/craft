@@ -47,9 +47,6 @@ const WeatherIcon = () => {
     const [scope, animateVariant, animate] = useAnimateVariant();
 
 
-    
-
-
     const animateRain = useCallback(async () => {
       
         const lines: SVGLineElement[] = Array.from(
@@ -65,7 +62,7 @@ const WeatherIcon = () => {
             const shuffled = [...lines].sort(() => Math.random() - 0.5);
       
             // Pick 4–8 drops for this "moment" of rain
-            //   const count = Math.floor(Math.random() * 5) + 4;
+            //  const count = Math.floor(Math.random() * 5) + 4;
             // For more sparse Rain
             const count = Math.floor(Math.random() * 4) + 3;
         
@@ -118,7 +115,6 @@ const WeatherIcon = () => {
 
             await animateVariant("[data-animate='cloud']", cloudVariants.hover);
 
-
             // Start the random rain
             animateRain();
         },
@@ -133,7 +129,6 @@ const WeatherIcon = () => {
             animationControlsRef.current = [];
         }
     })
-
 
     return (
         <svg width="188" height="168" viewBox="0 0 188 168" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -174,8 +169,5 @@ const WeatherIcon = () => {
                 <motion.line data-animate="drop" strokeDasharray="6.71px 7px" strokeDashoffset="7px" x1="76.0804" y1="107.447" x2="78.1868" y2="111.66" stroke="#CFCFCF" strokeWidth="2" strokeLinecap="round"/>
             </g>
         </svg>
-
-        
-
     )
 }
