@@ -15,6 +15,28 @@ export default function WeatherPage() {
 const sunVariants = {
     initial: {
         transform: "translateX(15px) translateY(14px) rotate(0deg)"
+    },
+    click: {
+        transform: [
+            "translateX(15px) translateY(14px) rotate(0deg)",
+            "translateX(0px) translateY(0px) rotate(-40deg)",
+            "translateX(0px) translateY(0px) rotate(-150deg)",
+        ],
+        transition: {
+            duration: 0.8,
+            times: [0, 0.5, 1],
+            ease: "easeIn",
+        }
+    },
+    exit: {
+        transform: [
+            "translateX(0px) translateY(0px) rotate(0deg)",
+            "translateX(15px) translateY(14px) rotate(0deg)"
+        ],
+        transition: {
+            duration: 0.3,
+            ease: "easeOut",
+        }
     }
 }
 const cloudVariants = {
@@ -35,6 +57,28 @@ const cloudVariants = {
         },
     }
 }
+const backgroundVariants = {
+    initial: {
+        transform: "scale(1) rotate(24deg)",
+        
+    },
+    hover: {
+        transform: ["scale(1) rotate(24deg)", "scale(0.98) rotate(24deg)", "scale(1) rotate(24deg)"],
+        transition: {
+            duration: 0.45,
+            times: [0.75, 0.8, 1],
+            ease: "easeInOut",
+        }
+    },
+    click: {
+        transform: ["scale(1)", "scale(0.985)", "scale(1.02)", "scale(1)"],
+        transition: {
+            duration: 0.45,
+            times: [0, 0.75, 0.9, 1],
+            ease: "easeInOut",
+        }
+    }
+}
 
 
 
@@ -45,6 +89,7 @@ const WeatherIcon = () => {
     const hoverDisabledRef = useRef(false);
     const isHoveringRef = useRef(false);
     const [scope, animateVariant, animate] = useAnimateVariant();
+    const hoverAnimDone = useRef(false);
 
 
     const animateRain = useCallback(async () => {
@@ -107,37 +152,49 @@ const WeatherIcon = () => {
         disabledRef: hoverDisabledRef,
         onHoverStart: async () => {
             console.log("hover call");
+            hoverAnimDone.current = false;
 
             // Cancel previous animations
             animationControlsRef.current.forEach((control) => control.stop());
             animationControlsRef.current = [];
             isHoveringRef.current = true;
 
+            animateVariant("[data-animate='background']", backgroundVariants.hover)
             await animateVariant("[data-animate='cloud']", cloudVariants.hover);
+
 
             // Start the random rain
             animateRain();
+            hoverAnimDone.current = true;
         },
         onHoverEnd: () => {
             // Invalidate the current rain loop
             isHoveringRef.current = false;
+            hoverAnimDone.current = false;
             
             animationControlsRef.current.forEach((control) => {
                 control.stop();
             });
+            animateVariant("[data-animate='sun']", sunVariants.exit)
 
             animationControlsRef.current = [];
         }
     })
 
+    const handleClick = () => {
+        if(!hoverAnimDone.current) return;
+        animateVariant("[data-animate='sun']", sunVariants.click)
+    }
+
     return (
         <svg width="188" height="168" viewBox="0 0 188 168" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <g 
+            <g
                 ref={scope}
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
+                onClick={handleClick}
             >
-                <ellipse cx="93.8731" cy="83.9638" rx="78" ry="53" transform="rotate(28.7234 93.8731 83.9638)" fill="#F3F3F3"/>
+                <motion.ellipse initial={backgroundVariants.initial} data-animate="background" cx="93.8731" cy="83.9638" rx="78" ry="53" transform="rotate(28.7234 93.8731 83.9638)" fill="#F3F3F3"/>
                 <motion.g initial={sunVariants.initial} data-animate="sun">
                     <circle cx="74.8306" cy="66.0918" r="8" fill="#F5C43E" stroke="#F5C43E"/>
                     <line x1="84.8311" y1="66.0918" x2="87.8311" y2="66.0918" stroke="#F5C43E" strokeLinecap="round"/>
