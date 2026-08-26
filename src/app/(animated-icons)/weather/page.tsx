@@ -71,7 +71,7 @@ const backgroundVariants = {
         }
     },
     click: {
-        transform: ["scale(1)", "scale(0.985)", "scale(1.02)", "scale(1)"],
+        transform: ["scale(1) rotate(24deg)", "scale(0.98) rotate(24deg)", "scale(1) rotate(24deg)"],
         transition: {
             duration: 0.45,
             times: [0, 0.75, 0.9, 1],
@@ -85,11 +85,11 @@ const backgroundVariants = {
 const WeatherIcon = () => {
     // const [scope, animate] = useAnimate();
     const animationControlsRef = useRef<AnimationPlaybackControls[]>([]);
-    const rainAnimationIdRef = useRef(0);
     const hoverDisabledRef = useRef(false);
     const isHoveringRef = useRef(false);
     const [scope, animateVariant, animate] = useAnimateVariant();
     const hoverAnimDone = useRef(false);
+    const isUserClicking = useRef(false);
 
 
     const animateRain = useCallback(async () => {
@@ -175,7 +175,10 @@ const WeatherIcon = () => {
             animationControlsRef.current.forEach((control) => {
                 control.stop();
             });
-            animateVariant("[data-animate='sun']", sunVariants.exit)
+            if(isUserClicking.current){
+                animateVariant("[data-animate='sun']", sunVariants.exit)
+                isUserClicking.current = false;
+            }
 
             animationControlsRef.current = [];
         }
@@ -183,7 +186,9 @@ const WeatherIcon = () => {
 
     const handleClick = () => {
         if(!hoverAnimDone.current) return;
+        animateVariant("[data-animate='background']", backgroundVariants.click)
         animateVariant("[data-animate='sun']", sunVariants.click)
+        isUserClicking.current = true;
     }
 
     return (
