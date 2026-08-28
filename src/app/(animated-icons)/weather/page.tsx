@@ -19,13 +19,13 @@ const sunVariants = {
     click: {
         transform: [
             "translateX(15px) translateY(14px) rotate(0deg)",
-            "translateX(0px) translateY(0px) rotate(-40deg)",
-            "translateX(0px) translateY(0px) rotate(-150deg)",
+            // "translateX(0px) translateY(0px) rotate(0deg)",
+            "translateX(0px) translateY(0px) rotate(-130deg)",
         ],
         transition: {
-            duration: 0.8,
-            times: [0, 0.5, 1],
-            ease: "easeIn",
+            duration: 0.3,
+            // times: [0, 0.5, 1],
+            ease: "easeOut",
         }
     },
     exit: {
@@ -35,6 +35,13 @@ const sunVariants = {
         ],
         transition: {
             duration: 0.3,
+            ease: "easeOut",
+        }
+    },
+    clickOnClick: {
+        transform: ["scale(1) rotate(-130deg)", "scale(0.95) rotate(-130deg)", "scale(1) rotate(-130deg)"],
+        transition: {
+            duration: 0.25,
             ease: "easeOut",
         }
     }
@@ -55,6 +62,13 @@ const cloudVariants = {
             times: [0, 0.55, 0.75, 1],
             ease: "easeIn",
         },
+    },
+    click: {
+        transform: ["scale(1)", "scale(0.98)", "scale(1)"],
+        transition: {
+            duration: 0.25,
+            ease: "easeOut",
+        }
     }
 }
 const backgroundVariants = {
@@ -73,9 +87,8 @@ const backgroundVariants = {
     click: {
         transform: ["scale(1) rotate(24deg)", "scale(0.98) rotate(24deg)", "scale(1) rotate(24deg)"],
         transition: {
-            duration: 0.45,
-            times: [0, 0.75, 0.9, 1],
-            ease: "easeInOut",
+            duration: 0.25,
+            ease: "easeOut",
         }
     }
 }
@@ -186,20 +199,28 @@ const WeatherIcon = () => {
 
     const handleClick = () => {
         if(!hoverAnimDone.current) return;
+        isHoveringRef.current = false;
+        if(isUserClicking.current) {
+            animateVariant("[data-animate='background']", backgroundVariants.click)
+            animateVariant("[data-animate='cloud']", cloudVariants.click);
+            animateVariant("[data-animate='sun']", sunVariants.clickOnClick)
+            return;
+        }
         animateVariant("[data-animate='background']", backgroundVariants.click)
+        animateVariant("[data-animate='cloud']", cloudVariants.click);
         animateVariant("[data-animate='sun']", sunVariants.click)
         isUserClicking.current = true;
     }
 
     return (
         <svg width="188" height="168" viewBox="0 0 188 168" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <g
+            <motion.g
                 ref={scope}
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
                 onClick={handleClick}
             >
-                <motion.ellipse initial={backgroundVariants.initial} data-animate="background" cx="93.8731" cy="83.9638" rx="78" ry="53" transform="rotate(28.7234 93.8731 83.9638)" fill="#F3F3F3"/>
+                <motion.ellipse initial={backgroundVariants.initial} data-animate="background" cx="93.8731" cy="83.9638" rx="78" ry="53" fill="#F3F3F3"/>
                 <motion.g initial={sunVariants.initial} data-animate="sun">
                     <circle cx="74.8306" cy="66.0918" r="8" fill="#F5C43E" stroke="#F5C43E"/>
                     <line x1="84.8311" y1="66.0918" x2="87.8311" y2="66.0918" stroke="#F5C43E" strokeLinecap="round"/>
@@ -229,7 +250,7 @@ const WeatherIcon = () => {
                 <motion.line data-animate="drop" strokeDasharray="6.71px 7px" strokeDashoffset="7px" x1="88.0804" y1="116.447" x2="90.1868" y2="120.66" stroke="#CFCFCF" strokeWidth="2" strokeLinecap="round"/>
                 <motion.line data-animate="drop" strokeDasharray="6.71px 7px" strokeDashoffset="7px" x1="98.0804" y1="108.447" x2="100.187" y2="112.66" stroke="#CFCFCF" strokeWidth="2" strokeLinecap="round"/>
                 <motion.line data-animate="drop" strokeDasharray="6.71px 7px" strokeDashoffset="7px" x1="76.0804" y1="107.447" x2="78.1868" y2="111.66" stroke="#CFCFCF" strokeWidth="2" strokeLinecap="round"/>
-            </g>
+            </motion.g>
         </svg>
     )
 }
