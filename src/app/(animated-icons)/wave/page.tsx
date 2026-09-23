@@ -150,20 +150,26 @@ const WaveIcon = () => {
     const handleClick = async () => {
         if (!hoverAnimDone.current) return;
 
+      
+
+        if (isUserClicking.current) return;
+
+        isUserClicking.current = true;
+
         const gen = ++motionGenRef.current;
         isHoveringRef.current = false;
         stopAnimations();
 
-        if (isUserClicking.current) {
-            animateVariant("[data-animate='background']", backgroundVariants.click);
-            track(animate(progress, [2, 1.78, 2], {
-                type: "spring",
-                stiffness: 220,
-                damping: 16,
-                mass: 0.7,
-            }));
-            return;
-        }
+        // if (isUserClicking.current) {
+        //     animateVariant("[data-animate='background']", backgroundVariants.click);
+        //     track(animate(progress, [2, 1.78, 2], {
+        //         type: "spring",
+        //         stiffness: 220,
+        //         damping: 16,
+        //         mass: 0.7,
+        //     }));
+        //     return;
+        // }
 
         animateVariant("[data-animate='background']", backgroundVariants.click);
 
@@ -175,14 +181,14 @@ const WaveIcon = () => {
         }));
         if (gen !== motionGenRef.current) return;
 
-        await track(animate(floatY, 1, {
-            type: "spring",
-            stiffness: 240,
-            damping: 16,
-        }));
-        if (gen !== motionGenRef.current) return;
+        // await track(animate(floatY, 1, {
+        //     type: "spring",
+        //     stiffness: 240,
+        //     damping: 16,
+        // }));
+        // if (gen !== motionGenRef.current) return;
 
-        await track(animate(progress, 1.85, {
+        await track(animate(progress, 1.7, {
             type: "spring",
             stiffness: 260,
             damping: 13,
@@ -198,13 +204,13 @@ const WaveIcon = () => {
         }));
         if (gen !== motionGenRef.current) return;
 
-        track(animate(floatY, 0, {
-            type: "spring",
-            stiffness: 180,
-            damping: 18,
-        }));
+        // track(animate(floatY, 0, {
+        //     type: "spring",
+        //     stiffness: 180,
+        //     damping: 18,
+        // }));
 
-        isUserClicking.current = true;
+        // isUserClicking.current = true;
     };
 
     return (
