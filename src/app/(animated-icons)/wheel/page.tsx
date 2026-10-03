@@ -69,11 +69,31 @@ const carBodyVariants = {
 
     }
 }
+const carWheelVariants = {
+    initial: {
+        transform: 'translateX(0px) translateY(0px) rotate(0deg)'
+    },
+    hover: {
+        transform: [
+            'translateX(0px) translateY(0px) rotate(0deg)'
+        ],
+        transition: {
+            duration: 0.3,
+            // times: [0.75, 0.8, 1],
+            ease: "easeOut",
+        }
+    },
+    click: {
+        transform: 'translateX(0px) translateY(0px) rotate(360deg)',
+        
+    }
+}
 
 
 const CarWheelIcon = () => {
     const hoverDisabledRef = useRef(false);
     const [scope, animateVariant, animate] = useAnimateVariant();
+    const animationControlsRef = useRef<AnimationPlaybackControls[]>([]);
 
 
     const { handleMouseEnter, handleMouseLeave } = useHoverTimeout({
@@ -82,29 +102,51 @@ const CarWheelIcon = () => {
         onHoverStart: async () => {
             console.log("hover call");
             await animateVariant("[data-animate='car-body']", carBodyVariants.hover);
+            animationControlsRef.current = [];
             scope.current?.querySelectorAll("[data-animate='smoke-line']").forEach((line, index: number) => {
-                animate(
-                    line,
-                    {
-                        strokeDashoffset: [`6.5px`, "0px", `-6.5px`],
-                    },
-                    {
-                        delay: 0.2,
-                        ease: easeOut,
-                        repeat: Infinity,
-                        repeatDelay: 0.8
-                    }
+                animationControlsRef.current.push(
+                    animate(
+                        line,
+                        {
+                            strokeDashoffset: [`6.5px`, "0px", `-6.5px`],
+                        },
+                        {
+                            ease: easeOut,
+                            // duration: 0.2,
+                            repeat: Infinity,
+                            repeatDelay: 0.05
+                        }
+                    )
                 )
-
             });
 
         },
         onHoverEnd: () => {
-            // Invalidate the current rain loop
+            // Stop the running animations
+            animationControlsRef.current.forEach((control) => {
+                control.stop();
+            });
+            scope.current?.querySelectorAll("[data-animate='smoke-line']").forEach((line, index: number) => {
+                animate(
+                    line,
+                    {
+                        strokeDashoffset: ['-6.5px'],
+                    },
+                    {
+                        ease: easeOut,
+                        duration: 0.1
+                    }
+                )
+                
+            });
 
             // animateVariant("[data-animate='sun']", sunVariants.exit)
         }
     })
+
+    const handleClick = () => {
+        animateVariant("[data-animate='car-wheel']", carWheelVariants.click);
+    }
 
     return (
         <motion.svg width="150" height="108" viewBox="0 0 150 108" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -112,14 +154,14 @@ const CarWheelIcon = () => {
                 ref={scope}
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
-                // onClick={handleClick}
+                onClick={handleClick}
             >
                 <mask id="mask0_566_3" style={{ maskType: 'alpha' }} maskUnits="userSpaceOnUse" x="0" y="0" width="150" height="108">
                     <path d="M65.0846 6.71153C29.0769 -2.18853 23.5767 -0.188489 19.0766 1.31147C-2.92396 8.64469 -9.64144 64.6112 19.2462 91.8943C41.8165 113.211 84.0258 102.09 90.8435 102.606C97.6611 103.122 110.295 114.077 113.797 102.606C117.299 91.1351 145.353 69.2019 148.737 61.7998C152.008 54.6455 131.008 30.8252 122.997 26.0144C122.522 25.7288 122.192 25.2403 122.175 24.6858C121.856 13.87 126.445 5.00968 128.844 1.86581C107.931 5.9463 114.602 18.9508 65.0846 6.71153Z" fill="#F7F7F7" />
                 </mask>
                 <g mask="url(#mask0_566_3)">
                     <rect x="-2.98425" y="-5.7793" width="154.043" height="117.827" fill="#F7F7F7" />
-                    <g clipPath="url(#clip0_566_3)">
+                    <motion.g clipPath="url(#clip0_566_3)" data-animate='car-wheel' initial={carWheelVariants.initial}>
                         <path d="M47.4863 51.4313C47.4863 51.4313 47.1306 55.4824 47.3164 59.215C47.5021 62.9477 48.6391 67.6039 48.6391 67.6039" stroke="#2B2727" strokeWidth="1.74883" />
                         <path d="M49.3038 51.1762C49.3038 51.1762 50.7623 54.9723 51.6126 58.6116C52.4629 62.2509 52.6534 67.0401 52.6534 67.0401" stroke="#2B2727" strokeWidth="1.74883" />
                         <path d="M30.1732 68.8519C30.1732 68.8519 33.8878 70.5071 37.4776 71.5467C41.0674 72.5863 45.8401 73.0273 45.8401 73.0273" stroke="#2B2727" strokeWidth="1.74883" />
@@ -142,7 +184,7 @@ const CarWheelIcon = () => {
                         <path d="M47.0823 52.5989C44.1632 52.7927 41.0076 54.7321 39.6459 55.767C39.5208 55.8621 39.4996 56.0394 39.5939 56.1651L40.3161 57.128C40.4225 57.2699 40.6297 57.2845 40.7609 57.1652C42.6863 55.4156 45.7773 54.4729 47.5005 54.234C47.6903 54.2076 47.8127 54.014 47.7472 53.8338L47.3666 52.7874C47.3234 52.6685 47.2086 52.5905 47.0823 52.5989Z" fill="#6F6F6F" />
                         <path d="M39.98 88.6758C42.1302 90.6596 45.7093 91.6132 47.3973 91.8883C47.5525 91.9136 47.6956 91.8069 47.7219 91.652L47.9231 90.4652C47.9527 90.2903 47.8207 90.1301 47.6438 90.117C45.0493 89.9251 42.2377 88.3322 40.878 87.2469C40.7282 87.1273 40.5035 87.1719 40.418 87.3434L39.921 88.3398C39.8645 88.453 39.887 88.59 39.98 88.6758Z" fill="#6F6F6F" />
                         <path d="M68.6132 81.9056C70.4012 79.59 71.0379 75.9412 71.1642 74.2356C71.1758 74.0788 71.0571 73.9456 70.9004 73.933L69.7006 73.8364C69.5238 73.8221 69.3757 73.9677 69.3781 74.145C69.4141 76.7464 68.0733 79.6866 67.1111 81.136C67.0051 81.2957 67.0692 81.5157 67.2476 81.5859L68.2836 81.9938C68.4014 82.0401 68.5359 82.0057 68.6132 81.9056Z" fill="#6F6F6F" />
-                    </g>
+                    </motion.g>
                     <motion.g data-animate="car-body" initial={carBodyVariants.initial}>
                         <path d="M105.662 67.1626C105.254 67.1626 103.962 67.3326 103.367 67.4176C103.163 67.8257 103.452 70.4779 103.622 71.753L105.662 67.1626Z" fill="#333232" />
                         <path d="M74.5474 83.9951C75.3125 82.7199 76.2476 79.0643 76.5877 77.3641C79.8521 72.8754 94.1003 68.1827 100.816 66.3975C101.581 66.6525 103.163 67.2136 103.367 67.4176C103.571 67.6216 103.622 72.2633 103.622 74.5587H102.346C101.326 76.3439 97.1607 78.0442 95.2054 78.8943C94.8654 79.3194 94.0323 80.2205 93.4202 80.4245C92.8081 80.6286 92.655 80.1695 92.655 79.9145C91.8389 80.3225 80.2432 82.8049 74.5474 83.9951Z" fill="#232323" />
@@ -156,6 +198,11 @@ const CarWheelIcon = () => {
                         <path d="M107 69C107.87 68.5 108.478 69 109.174 68.875C110.13 68.75 110.652 68.125 111.522 68.375C112.13 68.5 112.565 68.25 113 68" data-animate='smoke-line' stroke="#C9C9C9" strokeWidth="0.608179" strokeDasharray="6px 7px" strokeDashoffset="6.5px" strokeLinecap="round"/>
                         <path d="M107 71C107.676 70.5 108.268 71 108.944 70.875C109.789 70.75 110.465 70 111.141 70.25C111.901 70.625 112.408 70.375 113 70" data-animate='smoke-line' stroke="#C9C9C9" strokeWidth="0.608179" strokeDasharray="6px 7px" strokeDashoffset="6.5px" strokeLinecap="round"/>
                         <path d="M107 73C107.818 72.4286 108.364 73 109.091 72.8571C110 72.7143 110.455 72 111.182 72.2857C112 72.7143 112.545 72.4286 113 72" data-animate='smoke-line' stroke="#C9C9C9" strokeWidth="0.608179" strokeDasharray="6px 7px" strokeDashoffset="6.5px" strokeLinecap="round"/>
+                    </g>
+                    <g style={{ transform: 'translateX(8px)' }}>
+                        <path d="M107 69C107.87 68.5 108.478 69 109.174 68.875C110.13 68.75 110.652 68.125 111.522 68.375C112.13 68.5 112.565 68.25 113 68" data-animate='smoke-line-2' stroke="#C9C9C9" strokeWidth="0.608179" strokeDasharray="6px 7px" strokeDashoffset="6.5px" strokeLinecap="round"/>
+                        <path d="M107 71C107.676 70.5 108.268 71 108.944 70.875C109.789 70.75 110.465 70 111.141 70.25C111.901 70.625 112.408 70.375 113 70" data-animate='smoke-line-2' stroke="#C9C9C9" strokeWidth="0.608179" strokeDasharray="6px 7px" strokeDashoffset="6.5px" strokeLinecap="round"/>
+                        <path d="M107 73C107.818 72.4286 108.364 73 109.091 72.8571C110 72.7143 110.455 72 111.182 72.2857C112 72.7143 112.545 72.4286 113 72" data-animate='smoke-line-2' stroke="#C9C9C9" strokeWidth="0.608179" strokeDasharray="6px 7px" strokeDashoffset="6.5px" strokeLinecap="round"/>
                     </g>
                     <g data-animate="air-lines">
                         <line x1="10.4053" y1="24.6977" x2="49.4261" y2="24.6977" stroke="#D6D6D6" strokeDasharray="39.28px 40px" strokeDashoffset="40px" strokeWidth="0.4" strokeLinecap="round" />
