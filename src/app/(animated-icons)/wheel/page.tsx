@@ -61,7 +61,6 @@ const carBodyVariants = {
         ],
         transition: {
             duration: 0.3,
-            // times: [0.75, 0.8, 1],
             ease: "easeOut",
         }
     },
@@ -79,7 +78,6 @@ const carWheelVariants = {
         ],
         transition: {
             duration: 0.3,
-            // times: [0.75, 0.8, 1],
             ease: "easeOut",
         }
     },
