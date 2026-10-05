@@ -39,6 +39,7 @@ const wholeCarVariants = {
     click: {
         transform: "translateX(-140px) translateY(0px) rotate(0deg)",
         transition: {
+            delay: 0.1,
             duration: 0.9,
             ease: "easeOut",
         }
@@ -100,6 +101,7 @@ const carWheelVariants = {
     click: {
         transform: 'translateX(0px) translateY(0px) rotate(-360deg)',
         transition: {
+            delay: 0.1,
             duration: 0.9,
             ease: "easeOut",
         }
@@ -185,6 +187,19 @@ const CarWheelIcon = () => {
 
     const handleClick = async () => {
         clickAnimationRunning.current = true;
+        scope.current?.querySelectorAll("[data-animate='air-line']").forEach((line, index: number) => {
+            animate(
+                line,
+                {
+                    strokeDashoffset: ['40px', '0px', '-40px'],
+                },
+                {
+                    ease: easeOut,
+                    delay: 0.1*index,
+                    duration: 0.3
+                }
+            )
+        });
         animateVariant("[data-animate='car-wheel']", carWheelVariants.click);
         await animateVariant("[data-animate='whole-car']", wholeCarVariants.click);
 
@@ -260,16 +275,16 @@ const CarWheelIcon = () => {
                             <path d="M107 71C107.676 70.5 108.268 71 108.944 70.875C109.789 70.75 110.465 70 111.141 70.25C111.901 70.625 112.408 70.375 113 70" data-animate='smoke-line-2' stroke="#C9C9C9" strokeWidth="0.608179" strokeDasharray="6px 7px" strokeDashoffset="6.5px" strokeLinecap="round"/>
                             <path d="M107 73C107.818 72.4286 108.364 73 109.091 72.8571C110 72.7143 110.455 72 111.182 72.2857C112 72.7143 112.545 72.4286 113 72" data-animate='smoke-line-2' stroke="#C9C9C9" strokeWidth="0.608179" strokeDasharray="6px 7px" strokeDashoffset="6.5px" strokeLinecap="round"/>
                         </g>
-                        <g data-animate="air-lines">
-                            <line x1="10.4053" y1="24.6977" x2="49.4261" y2="24.6977" stroke="#D6D6D6" strokeDasharray="39.28px 40px" strokeDashoffset="40px" strokeWidth="0.4" strokeLinecap="round" />
-                            <line x1="74.6748" y1="30.309" x2="113.696" y2="30.309" stroke="#D6D6D6" strokeDasharray="39.28px 40px" strokeDashoffset="40px" strokeWidth="0.4" strokeLinecap="round" />
-                            <line x1="53.2517" y1="14.4965" x2="92.2725" y2="14.4965" stroke="#D6D6D6" strokeDasharray="39.28px 40px" strokeDashoffset="40px" strokeWidth="0.4" strokeLinecap="round" />
-                            <line x1="46.1106" y1="44.5907" x2="85.1313" y2="44.5907" stroke="#D6D6D6" strokeDasharray="39.28px 40px" strokeDashoffset="40px" strokeWidth="0.4" strokeLinecap="round" />
-                            <line x1="-2.3466" y1="57.8529" x2="36.6742" y2="57.853" stroke="#D6D6D6" strokeDasharray="39.28px 40px" strokeDashoffset="40px" strokeWidth="0.4" strokeLinecap="round" />
-                            <line x1="102.219" y1="49.6918" x2="141.24" y2="49.6918" stroke="#D6D6D6" strokeDasharray="39.28px 40px" strokeDashoffset="40px" strokeWidth="0.4" strokeLinecap="round" />
-                            <line x1="85.3864" y1="84.3774" x2="124.407" y2="84.3774" stroke="#D6D6D6" strokeDasharray="39.28px 40px" strokeDashoffset="40px" strokeWidth="0.4" strokeLinecap="round" />
-                        </g>
                     </motion.g>
+                    <g>
+                        <line x1="10.4053" y1="24.6977" x2="49.4261" y2="24.6977" stroke="#D6D6D6" data-animate="air-line" strokeDasharray="39.28px 40px" strokeDashoffset="40px" strokeWidth="0.4" strokeLinecap="round" />
+                        <line x1="74.6748" y1="30.309" x2="113.696" y2="30.309" stroke="#D6D6D6" data-animate="air-line" strokeDasharray="39.28px 40px" strokeDashoffset="40px" strokeWidth="0.4" strokeLinecap="round" />
+                        <line x1="53.2517" y1="14.4965" x2="92.2725" y2="14.4965" stroke="#D6D6D6" data-animate="air-line" strokeDasharray="39.28px 40px" strokeDashoffset="40px" strokeWidth="0.4" strokeLinecap="round" />
+                        <line x1="46.1106" y1="44.5907" x2="85.1313" y2="44.5907" stroke="#D6D6D6" data-animate="air-line" strokeDasharray="39.28px 40px" strokeDashoffset="40px" strokeWidth="0.4" strokeLinecap="round" />
+                        <line x1="-2.3466" y1="57.8529" x2="36.6742" y2="57.853" stroke="#D6D6D6" data-animate="air-line" strokeDasharray="39.28px 40px" strokeDashoffset="40px" strokeWidth="0.4" strokeLinecap="round" />
+                        <line x1="102.219" y1="49.6918" x2="141.24" y2="49.6918" stroke="#D6D6D6" data-animate="air-line" strokeDasharray="39.28px 40px" strokeDashoffset="40px" strokeWidth="0.4" strokeLinecap="round" />
+                        <line x1="85.3864" y1="84.3774" x2="124.407" y2="84.3774" stroke="#D6D6D6" data-animate="air-line" strokeDasharray="39.28px 40px" strokeDashoffset="40px" strokeWidth="0.4" strokeLinecap="round" />
+                    </g>
                 </g>
                 <defs>
                     <clipPath id="clip0_566_3">
