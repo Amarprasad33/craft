@@ -1,7 +1,7 @@
 "use client"
 import { useHoverTimeout } from "@/lib/hooks/use-hover-timeout";
 import { useRef } from "react";
-import {AnimationPlaybackControls, easeOut, motion, useAnimate} from 'motion/react'
+import {AnimationPlaybackControls, easeInOut, easeOut, motion, useAnimate} from 'motion/react'
 import { useAnimateVariant } from "@/lib/hooks/use-animate-variant";
 
 
@@ -41,7 +41,8 @@ const wholeCarVariants = {
         transition: {
             delay: 0.1,
             duration: 0.9,
-            ease: "easeOut",
+            ease: [0.5, 0.01, 0, 1],
+            // ease: easeInOut,
         }
     },
     restore: {
@@ -103,7 +104,7 @@ const carWheelVariants = {
         transition: {
             delay: 0.1,
             duration: 0.9,
-            ease: "easeOut",
+            ease: [0.5, 0.01, 0, 1]
         }
         
     },
