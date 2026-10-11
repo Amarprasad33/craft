@@ -1,6 +1,7 @@
 "use client"
 import { useAnimateVariant } from "@/lib/hooks/use-animate-variant"
 import { useHoverTimeout } from "@/lib/hooks/use-hover-timeout"
+import { delay } from "motion"
 import { useMotionValue, useTransform, motion, easeOut } from "motion/react"
 import { useRef } from "react"
 
@@ -19,11 +20,16 @@ const catEmoPaths = {
 
 }
 
-const normalRightEyeWhitesLEFT = [
+const judgyEyeWhitePathsLEFT = [
+    "M27.5906 36.9569C27.5906 40.9059 24.4531 43.5631 21.0621 43.5631C17.6712 43.5631 14.3005 40.9059 14.3005 36.9569C14.3005 33.0079 17.6712 29.8066 21.0621 29.8066C24.4531 29.8066 27.5906 33.0079 27.5906 36.9569Z",
+    "M27.5906 37.2367C27.5906 41.0189 24.4531 43.5638 21.0621 43.5638C17.6712 43.5638 14.3005 41.0189 14.3005 37.2367C14.3005 33.4546 17.6712 34.6632 21.0621 34.6632C24.4531 34.6632 27.5906 33.4546 27.5906 37.2367Z"
+]
+
+const squintEyeWhitesLEFT = [
     "M27.5906 36.9569C27.5906 40.9059 24.4531 43.5631 21.0621 43.5631C17.6712 43.5631 14.3005 40.9059 14.3005 36.9569C14.3005 33.0079 17.6712 29.8066 21.0621 29.8066C24.4531 29.8066 27.5906 33.0079 27.5906 36.9569Z",
     "M27.5906 37.1101C27.5906 41.059 24.453 43.7163 21.0621 43.7163C17.6711 43.7163 14.3004 41.059 14.3004 37.1101C14.3004 34.0386 14.5336 34.5047 21.0621 34.5048C27.5906 34.505 27.5906 34.1162 27.5906 37.1101Z"
 ]
-const normalRightEyeWhitesRIGHT = [
+const squintEyeWhitesRIGHT = [
     "M48.4196 36.6463C48.4196 40.5953 45.2821 43.2526 41.8911 43.2526C38.5001 43.2526 35.1295 40.5953 35.1295 36.6463C35.1295 32.6974 38.5001 29.4961 41.8911 29.4961C45.2821 29.4961 48.4196 32.6974 48.4196 36.6463Z",
     "M48.4196 36.6462C48.4196 40.5952 45.2821 43.2524 41.8911 43.2524C38.5001 43.2524 35.1295 40.5952 35.1295 36.6462C35.1294 33.5747 35.3626 34.0408 41.8911 34.041C48.4196 34.0411 48.4196 33.6524 48.4196 36.6462Z"
 ]
@@ -34,10 +40,10 @@ const CatIcon = () => {
     const [scope, animateVariant, animate] = useAnimateVariant();
 
     const leftEyePathProgress = useMotionValue(0);
-    const leftEyeWhitePath = useTransform(leftEyePathProgress, [0, 1], [...normalRightEyeWhitesLEFT]);
+    const leftEyeWhitePath = useTransform(leftEyePathProgress, [0, 1], [...squintEyeWhitesLEFT]);
     
     const rightEyePathProgress = useMotionValue(0);
-    const rightEyeWhitePath = useTransform(rightEyePathProgress, [0, 1], [...normalRightEyeWhitesRIGHT]);
+    const rightEyeWhitePath = useTransform(rightEyePathProgress, [0, 1], [...squintEyeWhitesRIGHT]);
 
 
     const { handleMouseEnter, handleMouseLeave } = useHoverTimeout({
@@ -57,7 +63,10 @@ const CatIcon = () => {
                 // times: [0, 0.32, 0.9],
             });
             animateVariant("[data-animate='left-pupil']", PupilVariants.leftPupilVariants.hover)
-            animateVariant("[data-animate='right-pupil']", PupilVariants.rightPupilVariants.hover)
+            await animateVariant("[data-animate='right-pupil']", PupilVariants.rightPupilVariants.hover);
+
+            animateVariant("[data-animate='left-pupil']", PupilVariants.leftPupilVariants.lookLeft)
+            await animateVariant("[data-animate='right-pupil']", PupilVariants.rightPupilVariants.lookLeft);
         },
         onHoverEnd: () => {
             // Invalidate the current rain loop
@@ -133,6 +142,25 @@ const CatIcon = () => {
         //     <path d="M31.3989 42.2422H33.2642" stroke-width="1.24352" stroke-linecap="round" stroke="#F6F6F6" />
         // </svg>
 
+        // <svg width="61" height="87" viewBox="0 0 61 87" fill="none" xmlns="http://www.w3.org/2000/svg">
+        // <path d="M48.4197 45.1178C50.2591 44.6255 55.0259 43.7499 59.3782 44.1851" stroke="#010101" stroke-width="0.621762" stroke-linecap="round"/>
+        // <path d="M48.5751 48.1492C51.4767 48.0196 57.8238 48.1803 60 49.859" stroke="#010101" stroke-width="0.621762" stroke-linecap="round"/>
+        // <path d="M46.0104 51.1797C48.7047 51.5424 53.3938 52.9673 56.4249 54.9102" stroke="#010101" stroke-width="0.621762" stroke-linecap="round"/>
+        // <path d="M11.6113 44.5981C9.72033 44.3747 4.87719 44.1915 0.632214 45.2462" stroke="#010101" stroke-width="0.621762" stroke-linecap="round"/>
+        // <path d="M11.892 47.6195C9.00181 47.9073 2.74325 48.9762 0.830233 50.9496" stroke="#010101" stroke-width="0.621762" stroke-linecap="round"/>
+        // <path d="M14.8648 50.252C12.2503 50.9972 7.81392 53.0796 5.09267 55.437" stroke="#010101" stroke-width="0.621762" stroke-linecap="round"/>
+        // <path d="M11.5803 75.1258C10.2746 77.0532 7.66834 83.2864 6.52844 86.162L45.2331 86.162C45.3368 86.162 45.0155 84.7009 42.9015 78.8563C40.7875 73.0117 39.5336 61.8615 39.171 57.0169C38.2901 51.5247 36.2331 39.2812 35.0518 34.2449C33.5751 27.9495 26.0362 31.1361 25.0259 35.9547C24.0155 40.7734 19.1191 54.219 18.8082 57.0169C18.4974 59.8149 13.2124 72.7164 11.5803 75.1258Z" fill="#010101"/>
+        // <path d="M13.7564 51.491C14.6114 52.1128 17.8756 53.9781 18.7305 54.2112C23.6508 55.5531 30.2378 56 39.4818 54.6776C41.2694 54.2631 44.6891 53.2786 46.6321 51.491C48.5751 49.7035 50.6735 46.2838 51.2176 42.8641C51.6528 40.1283 51.088 37.1128 50.7512 35.947C50.5181 35.1698 50.4922 33.9781 50.6735 33.6154C51.2331 30.6931 50.9844 25.3512 50.7512 23.0455C45 21.4133 34.6632 21.8019 33.4974 21.6465C32.5647 21.5222 28.6269 21.6465 26.9689 21.7242C20.5181 21.7242 8.47147 23.9781 8.00515 25.7657C7.53883 27.5532 7.75964 32.7686 8.08286 33.6154C8.39375 34.4299 8.54919 35.7511 8.47147 35.947C8.05696 37.0351 7.38339 39.9418 8.00515 42.8641C8.93779 47.1387 12.9015 50.8693 13.7564 51.491Z" fill="#010101"/>
+        // <path d="M33.8083 20.6363C33.4974 21.4446 32.9015 21.8021 32.6425 21.8799C40.1658 28.284 47.9015 25.8954 50.829 23.9006C50.9067 17.6052 46.4767 5.01456 45.8549 3.84875C45.2331 2.68295 43.2124 -1.35851 40.4922 2.29435C37.772 5.9472 34.1969 19.626 33.8083 20.6363Z" fill="#010101"/>
+        // <path d="M16.0103 1.4394C9.55951 11.543 7.5906 24.4187 7.92738 28.0197C22.601 29.3876 26.8393 24.4964 27.1243 21.8799C26.8756 21.8799 26.8134 21.4653 26.8134 21.2581C26.5025 16.3617 21.917 5.01455 19.974 1.4394C18.5483 -1.18396 16.6839 0.377226 16.0103 1.4394Z" fill="#010101"/>
+        // <path data-name="lefteyewhite" d="M27.5906 37.2367C27.5906 41.0189 24.4531 43.5638 21.0621 43.5638C17.6712 43.5638 14.3005 41.0189 14.3005 37.2367C14.3005 33.4546 17.6712 34.6632 21.0621 34.6632C24.4531 34.6632 27.5906 33.4546 27.5906 37.2367Z" fill="#F6F6F6"/>
+        // <path d="M22.8638 31.4764C21.192 33.5517 21.9744 38.0579 22.696 39.2197C22.791 39.3726 22.9431 39.4768 23.1144 39.532C23.3106 39.5953 23.484 39.6091 23.6314 39.5958C23.9657 39.5657 24.1976 39.2776 24.3168 38.9638C25.256 36.4915 24.5479 32.0595 24.0296 31.4764C23.4769 30.8546 23.0451 31.2432 22.8638 31.4764Z" fill="black"/>
+        // <path d="M48.4197 36.6464C48.4197 40.5953 45.2822 43.2526 41.8912 43.2526C38.5002 43.2526 35.1295 40.5953 35.1295 36.6464C35.1295 32.6974 38.5002 29.4961 41.8912 29.4961C45.2822 29.4961 48.4197 32.6974 48.4197 36.6464Z" fill="#F6F6F6"/>
+        // <path d="M38.6411 32.953C36.9779 35.0176 37.6776 38.2319 38.3858 39.2267C38.4901 39.3733 38.6426 39.4767 38.8139 39.5319C39.0102 39.5952 39.1836 39.609 39.3309 39.5957C39.6652 39.5656 39.8963 39.2774 40.0227 38.9666C40.9624 36.6573 40.3241 33.5349 39.8069 32.953C39.2542 32.3312 38.8224 32.7198 38.6411 32.953Z" fill="black"/>
+        // <path d="M31.3989 42.2422H33.2642" stroke="#F6F6F6" stroke-width="1.24352" stroke-linecap="round"/>
+        // </svg>
+
+
 
     )
 }
@@ -149,6 +177,14 @@ const PupilVariants = {
                 duration: 0.25,
                 ease: "easeOut",
             },
+        },
+        lookLeft: {
+            transform: "translateX(-6px) translateY(0px) rotate(0deg)",
+            transition: {
+                delay: 0.28,
+                duration: 0.27,
+                ease: [0.215, 0.61, 0.355, 1],
+            },
         }
     },
     rightPupilVariants: {
@@ -160,6 +196,14 @@ const PupilVariants = {
             transition: {
                 duration: 0.25,
                 ease: "easeOut",
+            },
+        },
+        lookLeft: {
+            transform: "translateX(-1px) translateY(0px) rotate(0deg)",
+            transition: {
+                delay: 0.28,
+                duration: 0.27,
+                ease: [0.215, 0.61, 0.355, 1],
             },
         }
     }
