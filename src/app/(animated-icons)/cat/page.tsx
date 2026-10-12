@@ -2,7 +2,7 @@
 import { useAnimateVariant } from "@/lib/hooks/use-animate-variant"
 import { useHoverTimeout } from "@/lib/hooks/use-hover-timeout"
 import { delay } from "motion"
-import { useMotionValue, useTransform, motion, easeOut } from "motion/react"
+import { useMotionValue, useTransform, motion, easeOut, AnimationPlaybackControls } from "motion/react"
 import { useEffect, useRef } from "react"
 
 
@@ -48,6 +48,8 @@ const CatIcon = () => {
     const rightEyeWhitePath = useTransform(rightEyePathProgress, [0, 1], [...squintEyeWhitesRIGHT]);
 
     const hoverAnimationCompleted = useRef(true);
+    const idleRunIdRef = useRef(0);
+    const idleControlsRef = useRef<AnimationPlaybackControls[]>([]);
 
 
     const { handleMouseEnter, handleMouseLeave } = useHoverTimeout({
@@ -56,41 +58,45 @@ const CatIcon = () => {
         onHoverStart: async () => {
             console.log("hover call");
             hoverAnimationCompleted.current = false;
+            stopIdleAnimations();
             
-            animate(leftEyePathProgress, [0, 1], {
-                ease: easeOut,
-                duration: 0.25,
-                // times: [0, 0.32, 0.9],
-            });
-            animate(rightEyePathProgress, [0, 1], {
-                ease: easeOut,
-                duration: 0.25,
-                // times: [0, 0.32, 0.9],
-            });
+            if(leftEyePathProgress.get() === 0){
+                animate(leftEyePathProgress, [0, 1], {
+                    ease: easeOut,
+                    duration: 0.25,
+                    // times: [0, 0.32, 0.9],
+                });
+            }
+            
+            if(rightEyePathProgress.get() === 0){
+                animate(rightEyePathProgress, [0, 1], {
+                    ease: easeOut,
+                    duration: 0.25,
+                    // times: [0, 0.32, 0.9],
+                });
+            }
             animateVariant("[data-animate='left-pupil']", PupilVariants.leftPupilVariants.hover)
             await animateVariant("[data-animate='right-pupil']", PupilVariants.rightPupilVariants.hover);
 
             animateVariant("[data-animate='left-pupil']", PupilVariants.leftPupilVariants.lookLeft)
             await animateVariant("[data-animate='right-pupil']", PupilVariants.rightPupilVariants.lookLeft);
             
-            console.log("hover end");
+            // console.log("hover end");
         },
         onHoverEnd: () => {
-            // Invalidate the current rain loop
             animate(leftEyePathProgress, [1, 0], {
                 ease: easeOut,
                 duration: 0.25,
-                // times: [0, 0.32, 0.9],
             });
             animate(rightEyePathProgress, [1, 0], {
                 ease: easeOut,
                 duration: 0.25,
-                // times: [0, 0.32, 0.9],
             });
             animateVariant("[data-animate='left-pupil']", PupilVariants.leftPupilVariants.initial)
             animateVariant("[data-animate='right-pupil']", PupilVariants.rightPupilVariants.initial)
             animateVariant("[data-animate='head']", headVariants.initial)
             hoverAnimationCompleted.current = true;
+            idleRunIdRef.current = 0;
         }
     })
 
@@ -107,50 +113,88 @@ const CatIcon = () => {
 
     }
 
-    const runIdleAnimations = async () => {
-        if(!hoverAnimationCompleted.current) return;
-        animate(leftEyePathProgress, [0, 1], {
-            ease: easeOut,
-            duration: 0.25,
-            // times: [0, 0.32, 0.9],
-        });
-        animate(rightEyePathProgress, [0, 1], {
-            ease: easeOut,
-            duration: 0.25,
-            // times: [0, 0.32, 0.9],
-        });
-
-        animateVariant("[data-animate='left-pupil']", PupilVariants.leftPupilVariants.idle)
-        await animateVariant("[data-animate='right-pupil']", PupilVariants.rightPupilVariants.idle);
-
-        animateVariant("[data-animate='left-pupil']", PupilVariants.leftPupilVariants.lookRightOnIdle)
-        await animateVariant("[data-animate='right-pupil']", PupilVariants.rightPupilVariants.lookRightOnIdle);
+    const stopIdleAnimations = () => {
+        // Invalidate any running async idle sequence
+        idleRunIdRef.current++;
+      
+        // Stop only the idle animation controls
+        idleControlsRef.current.forEach((control) => control.stop());
+        idleControlsRef.current = [];
+    };
+    
+    const trackIdleAnimation = (control: AnimationPlaybackControls | undefined) => {
+        if(control)
+            idleControlsRef.current.push(control);
         
+        return control;
+    };
+
+    const runIdleAnimations = async () => {
+        const runId = idleRunIdRef.current;
+
+        // for invalidation of running animation
+        const isCancelled = () => runId !== idleRunIdRef.current;
+
+        if(!hoverAnimationCompleted.current) return;
+        
+        trackIdleAnimation(
+            animate(leftEyePathProgress, [0, 1], {
+              ease: easeOut,
+              duration: 0.25,
+            })
+        );
+        
+        trackIdleAnimation(
+            animate(rightEyePathProgress, [0, 1], {
+              ease: easeOut,
+              duration: 0.25,
+            })
+        );
+
+        if (isCancelled()) return;
+
+        trackIdleAnimation(
+            animateVariant("[data-animate='left-pupil']", PupilVariants.leftPupilVariants.idle)
+        )
+
+        // animateVariant("[data-animate='left-pupil']", PupilVariants.leftPupilVariants.idle)
+        await trackIdleAnimation(
+            animateVariant("[data-animate='right-pupil']", PupilVariants.rightPupilVariants.idle)
+        )
+
+        if (isCancelled()) return;
+
+        trackIdleAnimation(
+            animateVariant("[data-animate='left-pupil']", PupilVariants.leftPupilVariants.lookRightOnIdle)
+        )
+        await trackIdleAnimation(
+            animateVariant("[data-animate='right-pupil']", PupilVariants.rightPupilVariants.lookRightOnIdle)
+        )
+        if (isCancelled()) return;
+
         await new Promise((resolve) => setTimeout(resolve, 2000));
-        animate(leftEyePathProgress, [1, 0], {
-            ease: easeOut,
-            duration: 0.25,
-            // times: [0, 0.32, 0.9],
-        });
-        animate(rightEyePathProgress, [1, 0], {
-            ease: easeOut,
-            duration: 0.25,
-            // times: [0, 0.32, 0.9],
-        });
+        if (isCancelled()) return;
+
+        trackIdleAnimation(
+            animate(leftEyePathProgress, [1, 0], {
+              ease: easeOut,
+              duration: 0.25,
+            })
+        );
+        
+        trackIdleAnimation(
+            animate(rightEyePathProgress, [1, 0], {
+              ease: easeOut,
+              duration: 0.25,
+            })
+        );
+        if (isCancelled()) return;
+
         animateVariant("[data-animate='left-pupil']", PupilVariants.leftPupilVariants.initial)
         animateVariant("[data-animate='right-pupil']", PupilVariants.rightPupilVariants.initial)
     }
 
     useEffect(() => {
-        // async function initAnim(){
-        //     console.log("timer start")
-
-        //     await new Promise((resolve) => setTimeout(resolve, 3000));
-        //     console.log("timer end")
-        //     runIdleAnimations();
-        // }
-
-        // initAnim()
         let cancelled = false;
         let timer: ReturnType<typeof setTimeout>;
 
