@@ -3,7 +3,7 @@ import { useAnimateVariant } from "@/lib/hooks/use-animate-variant"
 import { useHoverTimeout } from "@/lib/hooks/use-hover-timeout"
 import { delay } from "motion"
 import { useMotionValue, useTransform, motion, easeOut } from "motion/react"
-import { useRef } from "react"
+import { useEffect, useRef } from "react"
 
 
 
@@ -47,12 +47,15 @@ const CatIcon = () => {
     const rightEyePathProgress = useMotionValue(0);
     const rightEyeWhitePath = useTransform(rightEyePathProgress, [0, 1], [...squintEyeWhitesRIGHT]);
 
+    const hoverAnimationCompleted = useRef(true);
+
 
     const { handleMouseEnter, handleMouseLeave } = useHoverTimeout({
         delay: 100,
         disabledRef: hoverDisabledRef,
         onHoverStart: async () => {
             console.log("hover call");
+            hoverAnimationCompleted.current = false;
             
             animate(leftEyePathProgress, [0, 1], {
                 ease: easeOut,
@@ -69,6 +72,8 @@ const CatIcon = () => {
 
             animateVariant("[data-animate='left-pupil']", PupilVariants.leftPupilVariants.lookLeft)
             await animateVariant("[data-animate='right-pupil']", PupilVariants.rightPupilVariants.lookLeft);
+            
+            console.log("hover end");
         },
         onHoverEnd: () => {
             // Invalidate the current rain loop
@@ -85,11 +90,11 @@ const CatIcon = () => {
             animateVariant("[data-animate='left-pupil']", PupilVariants.leftPupilVariants.initial)
             animateVariant("[data-animate='right-pupil']", PupilVariants.rightPupilVariants.initial)
             animateVariant("[data-animate='head']", headVariants.initial)
-
+            hoverAnimationCompleted.current = true;
         }
     })
 
-    const handleClick = () => {
+    const handleClick = async () => {
         animate(leftEyePathProgress, [1, 2], {
             ease: easeOut,
             duration: 0.25,
@@ -102,6 +107,79 @@ const CatIcon = () => {
 
     }
 
+    const runIdleAnimations = async () => {
+        if(!hoverAnimationCompleted.current) return;
+        animate(leftEyePathProgress, [0, 1], {
+            ease: easeOut,
+            duration: 0.25,
+            // times: [0, 0.32, 0.9],
+        });
+        animate(rightEyePathProgress, [0, 1], {
+            ease: easeOut,
+            duration: 0.25,
+            // times: [0, 0.32, 0.9],
+        });
+
+        animateVariant("[data-animate='left-pupil']", PupilVariants.leftPupilVariants.idle)
+        await animateVariant("[data-animate='right-pupil']", PupilVariants.rightPupilVariants.idle);
+
+        animateVariant("[data-animate='left-pupil']", PupilVariants.leftPupilVariants.lookRightOnIdle)
+        await animateVariant("[data-animate='right-pupil']", PupilVariants.rightPupilVariants.lookRightOnIdle);
+        
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+        animate(leftEyePathProgress, [1, 0], {
+            ease: easeOut,
+            duration: 0.25,
+            // times: [0, 0.32, 0.9],
+        });
+        animate(rightEyePathProgress, [1, 0], {
+            ease: easeOut,
+            duration: 0.25,
+            // times: [0, 0.32, 0.9],
+        });
+        animateVariant("[data-animate='left-pupil']", PupilVariants.leftPupilVariants.initial)
+        animateVariant("[data-animate='right-pupil']", PupilVariants.rightPupilVariants.initial)
+    }
+
+    useEffect(() => {
+        // async function initAnim(){
+        //     console.log("timer start")
+
+        //     await new Promise((resolve) => setTimeout(resolve, 3000));
+        //     console.log("timer end")
+        //     runIdleAnimations();
+        // }
+
+        // initAnim()
+        let cancelled = false;
+        let timer: ReturnType<typeof setTimeout>;
+
+        const delay = (ms: number) =>
+            new Promise<void>((resolve) => {timer = setTimeout(resolve, ms)});
+
+        async function initAnim() {
+            // Initial delay only
+            await delay(3000);
+
+            while (!cancelled) {
+                await runIdleAnimations();
+              
+                if (cancelled) break;
+              
+                // Delay between subsequent cycles
+                await delay(6000);
+            }
+        }
+
+        initAnim();
+
+        return () => {
+            cancelled = true;
+            clearTimeout(timer);
+        };
+
+    }, []);
+
     return (
         <motion.svg width="130" height="130" viewBox="0 0 130 130" fill="none" xmlns="http://www.w3.org/2000/svg">
             <g transform="translate(35 22)">
@@ -111,7 +189,6 @@ const CatIcon = () => {
                     onMouseEnter={handleMouseEnter}
                     onMouseLeave={handleMouseLeave}
                     onClick={handleClick}
-                   
                 >
                     <motion.g  
                         data-animate="head"
@@ -171,6 +248,13 @@ const CatIcon = () => {
 
 const PupilVariants = {
     leftPupilVariants: {
+        idle: {
+            transform: "translateX(0px) translateY(-3px) rotate(0deg)",
+            transition: {
+                duration: 0.25,
+                ease: "easeOut",
+            },
+        },
         initial: {
             transform: "translateX(0px) translateY(0px) rotate(0deg)",
         },
@@ -188,9 +272,24 @@ const PupilVariants = {
                 duration: 0.27,
                 ease: [0.215, 0.61, 0.355, 1],
             },
+        },
+        lookRightOnIdle: {
+            transform: "translateX(1px) translateY(-2px) rotate(0deg)",
+            transition: {
+                delay: 0.45,
+                duration: 0.27,
+                ease: [0.215, 0.61, 0.355, 1],
+            },
         }
     },
     rightPupilVariants: {
+        idle: {
+            transform: "translateX(0px) translateY(-2px) rotate(0deg)",
+            transition: {
+                duration: 0.25,
+                ease: "easeOut",
+            },
+        },
         initial: {
             transform: "translateX(0px) translateY(0px) rotate(0deg)",
         },
@@ -205,6 +304,14 @@ const PupilVariants = {
             transform: "translateX(-1px) translateY(0px) rotate(0deg)",
             transition: {
                 delay: 0.28,
+                duration: 0.27,
+                ease: [0.215, 0.61, 0.355, 1],
+            },
+        },
+        lookRightOnIdle: {
+            transform: "translateX(6px) translateY(-1px) rotate(0deg)",
+            transition: {
+                delay: 0.45,
                 duration: 0.27,
                 ease: [0.215, 0.61, 0.355, 1],
             },
