@@ -47,7 +47,7 @@ const CatIcon = () => {
     const rightEyePathProgress = useMotionValue(0);
     const rightEyeWhitePath = useTransform(rightEyePathProgress, [0, 1], [...squintEyeWhitesRIGHT]);
 
-    const hoverAnimationCompleted = useRef(true);
+    const hoverAnimationSequenceCompleted = useRef(true);
     const idleRunIdRef = useRef(0);
     const idleControlsRef = useRef<AnimationPlaybackControls[]>([]);
 
@@ -57,7 +57,7 @@ const CatIcon = () => {
         disabledRef: hoverDisabledRef,
         onHoverStart: async () => {
             console.log("hover call");
-            hoverAnimationCompleted.current = false;
+            hoverAnimationSequenceCompleted.current = false;
             stopIdleAnimations();
             
             if(leftEyePathProgress.get() === 0){
@@ -95,7 +95,7 @@ const CatIcon = () => {
             animateVariant("[data-animate='left-pupil']", PupilVariants.leftPupilVariants.initial)
             animateVariant("[data-animate='right-pupil']", PupilVariants.rightPupilVariants.initial)
             animateVariant("[data-animate='head']", headVariants.initial)
-            hoverAnimationCompleted.current = true;
+            hoverAnimationSequenceCompleted.current = true;
             idleRunIdRef.current = 0;
         }
     })
@@ -135,7 +135,7 @@ const CatIcon = () => {
         // for invalidation of running animation
         const isCancelled = () => runId !== idleRunIdRef.current;
 
-        if(!hoverAnimationCompleted.current) return;
+        if(!hoverAnimationSequenceCompleted.current) return;
         
         trackIdleAnimation(
             animate(leftEyePathProgress, [0, 1], {
@@ -207,6 +207,7 @@ const CatIcon = () => {
 
             while (!cancelled) {
                 await runIdleAnimations();
+                console.log("anim--")
               
                 if (cancelled) break;
               
@@ -227,13 +228,14 @@ const CatIcon = () => {
     return (
         <motion.svg width="130" height="130" viewBox="0 0 130 130" fill="none" xmlns="http://www.w3.org/2000/svg">
             <g transform="translate(35 22)">
-                <path data-animate="body" d="M11.5803 75.1267C10.2746 77.0541 7.66834 83.2873 6.52844 86.1629L45.2331 86.1629C45.3367 86.1629 45.0155 84.7018 42.9015 78.8572C40.7875 73.0126 39.5336 61.8624 39.1709 57.0179C38.2901 51.5256 36.2331 39.2821 35.0517 34.2459C33.5751 27.9505 26.0362 31.1371 25.0258 35.9557C24.0155 40.7744 19.1191 54.2199 18.8082 57.0179C18.4973 59.8158 13.2124 72.7174 11.5803 75.1267Z" fill="#010101" />
                 <motion.g
                     ref={scope}
                     onMouseEnter={handleMouseEnter}
                     onMouseLeave={handleMouseLeave}
                     onClick={handleClick}
                 >
+                    <path data-animate="body" d="M11.5803 75.1267C10.2746 77.0541 7.66834 83.2873 6.52844 86.1629L45.2331 86.1629C45.3367 86.1629 45.0155 84.7018 42.9015 78.8572C40.7875 73.0126 39.5336 61.8624 39.1709 57.0179C38.2901 51.5256 36.2331 39.2821 35.0517 34.2459C33.5751 27.9505 26.0362 31.1371 25.0258 35.9557C24.0155 40.7744 19.1191 54.2199 18.8082 57.0179C18.4973 59.8158 13.2124 72.7174 11.5803 75.1267Z" fill="#010101" />
+
                     <motion.g  
                         data-animate="head"
                         initial={headVariants.initial}
