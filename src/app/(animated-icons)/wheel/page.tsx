@@ -53,17 +53,6 @@ const wholeCarVariants = {
         }
     },
 }
-const airlinesVariants = {
-    initial: {
-
-    },
-    hover: {
-
-    },
-    click: {
-
-    }
-}
 const carBodyVariants = {
     initial: {
         transform: 'translateX(0px) translateY(0px) rotate(0deg)'
