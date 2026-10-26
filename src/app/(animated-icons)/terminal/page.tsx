@@ -1,8 +1,8 @@
 "use client"
 
 import { useHoverTimeout } from "@/lib/hooks/use-hover-timeout";
-import { useRef } from "react";
-import { motion } from 'motion/react';
+import { useEffect, useRef } from "react";
+import { easeOut, motion } from 'motion/react';
 import { useAnimateVariant } from "@/lib/hooks/use-animate-variant";
 
 
@@ -26,10 +26,45 @@ const TerminalIcon = () => {
         disabledRef: hoverDisabledRef,
         onHoverStart: async () => {
             console.log("hover call");
+            animateVariant("[data-animate='term-line']", termLineVrnt.hover)
+            await animateVariant("[data-animate='term-arrow']", termArrowVrnt.hover)
+
+            // typing state
+            await animateVariant("[data-animate='input-bar']", inputBarVrnt.hover)
+
+            scope.current?.querySelectorAll("[data-animate='typing-dot']").forEach((circle, index: number) => {
+                animate(
+                    circle,
+                    {
+                        opacity: 1,
+                    },
+                    {
+                       delay: 0.25*index
+                    }
+                )
+            });
            
         },
-        onHoverEnd: () => {
-            // Stop the running animations
+        onHoverEnd: async () => {
+            // Stop/restore the running animations
+            scope.current?.querySelectorAll("[data-animate='typing-dot']").forEach((circle, index: number) => {
+                animate(
+                    circle,
+                    {
+                        opacity: 0,
+                    },
+                    {
+                       delay: 0.0005*(11-index)
+                    }
+                )
+            });
+            animateVariant("[data-animate='input-bar']", inputBarVrnt.initial)
+
+            
+
+            animateVariant("[data-animate='term-arrow']", termArrowVrnt.restoreInitial)
+            animateVariant("[data-animate='term-line']", termLineVrnt.restoreInitial)
+
            
             // animateVariant("[data-animate='sun']", sunVariants.exit)
         }
@@ -39,6 +74,18 @@ const TerminalIcon = () => {
     const handleClick = async () => {
        
     }
+
+    // useEffect(() => {
+        // scope.current?.querySelectorAll("[data-animate='typing-dot']").forEach((line, index: number) => {
+        //     animate(
+        //         line,
+        //         {
+        //             opacity: 0,
+        //         },
+        //         {} // transition props
+        //     )
+        // });
+    // }, [])
     
 
     return (
@@ -51,24 +98,24 @@ const TerminalIcon = () => {
             >
                 <rect width="84" height="84" rx="21" fill="#F3F3F3"/>
                 <g>
-                    <path d="M24.9375 28.875L37.1344 41.0719C37.647 41.5845 37.647 42.4155 37.1344 42.9281L24.9375 55.125" strokeWidth="6.5625" strokeLinecap="round" stroke="#989898"/>
-                    <path d="M47.9062 55.125H62.3438" strokeWidth="6.5625" strokeLinecap="round" stroke="#989898"/>
+                    <path data-animate="term-arrow" d="M24.9375 28.875L37.1344 41.0719C37.647 41.5845 37.647 42.4155 37.1344 42.9281L24.9375 55.125" strokeWidth="6.5625" strokeLinecap="round" stroke="#989898"/>
+                    <path data-animate="term-line" d="M47.9062 55.125H62.3438" strokeWidth="6.5625" strokeLinecap="round" stroke="#989898"/>
                 </g>
 
                 <g data-animate="term-typing">
-                    <motion.path data-animate="input-bar" initial={inputBarVariants.initial} d="M0 55.7812H84" strokeWidth="1.3125" stroke="#989898"/>
-                    <motion.path data-animate="input-bar" initial={inputBarVariants.initial} d="M0 63.6562H84" strokeWidth="1.3125" stroke="#989898"/>
-                    <circle cx="3.28125" cy="59.7188" r="1.96875" fill="#989898"/>
-                    <circle cx="11.1562" cy="59.7188" r="1.96875" fill="#989898"/>
-                    <circle cx="19.0312" cy="59.7188" r="1.96875" fill="#989898"/>
-                    <circle cx="26.9062" cy="59.7188" r="1.96875" fill="#989898"/>
-                    <circle cx="34.7812" cy="59.7188" r="1.96875" fill="#989898"/>
-                    <circle cx="42.6562" cy="59.7188" r="1.96875" fill="#989898"/>
-                    <circle cx="50.5312" cy="59.7188" r="1.96875" fill="#989898"/>
-                    <circle cx="58.4062" cy="59.7188" r="1.96875" fill="#989898"/>
-                    <circle cx="66.2812" cy="59.7188" r="1.96875" fill="#989898"/>
-                    <circle cx="74.1562" cy="59.7188" r="1.96875" fill="#989898"/>
-                    <circle cx="82.0312" cy="59.7188" r="1.96875" fill="#989898"/>
+                    <motion.path data-animate="input-bar" initial={inputBarVrnt.initial} d="M0 55.7812H84" strokeWidth="1.3125" stroke="#989898"/>
+                    <motion.path data-animate="input-bar" initial={inputBarVrnt.initial} d="M0 63.6562H84" strokeWidth="1.3125" stroke="#989898"/>
+                    <motion.circle data-animate="typing-dot" initial={typingDotVrnt.initial} cx="3.28125" cy="59.7188" r="1.96875" fill="#989898"/>
+                    <motion.circle data-animate="typing-dot" initial={typingDotVrnt.initial} cx="11.1562" cy="59.7188" r="1.96875" fill="#989898"/>
+                    <motion.circle data-animate="typing-dot" initial={typingDotVrnt.initial} cx="19.0312" cy="59.7188" r="1.96875" fill="#989898"/>
+                    <motion.circle data-animate="typing-dot" initial={typingDotVrnt.initial} cx="26.9062" cy="59.7188" r="1.96875" fill="#989898"/>
+                    <motion.circle data-animate="typing-dot" initial={typingDotVrnt.initial} cx="34.7812" cy="59.7188" r="1.96875" fill="#989898"/>
+                    <motion.circle data-animate="typing-dot" initial={typingDotVrnt.initial} cx="42.6562" cy="59.7188" r="1.96875" fill="#989898"/>
+                    <motion.circle data-animate="typing-dot" initial={typingDotVrnt.initial} cx="50.5312" cy="59.7188" r="1.96875" fill="#989898"/>
+                    <motion.circle data-animate="typing-dot" initial={typingDotVrnt.initial} cx="58.4062" cy="59.7188" r="1.96875" fill="#989898"/>
+                    <motion.circle data-animate="typing-dot" initial={typingDotVrnt.initial} cx="66.2812" cy="59.7188" r="1.96875" fill="#989898"/>
+                    <motion.circle data-animate="typing-dot" initial={typingDotVrnt.initial} cx="74.1562" cy="59.7188" r="1.96875" fill="#989898"/>
+                    <motion.circle data-animate="typing-dot" initial={typingDotVrnt.initial} cx="82.0312" cy="59.7188" r="1.96875" fill="#989898"/>
                 </g>
                 {/* <g>
                     <path d="M15.0938 16.4062H38.7188" strokeWidth="3.9375" strokeLinecap="round" stroke="#989898"/>
@@ -83,14 +130,82 @@ const TerminalIcon = () => {
     )
 }
 
-const inputBarVariants = {
+const inputBarVrnt = {
     initial: {
         transform: "translateX(-100%)"
     },
     hover: {
-
+        transform: "translateX(0%)",
+        transition: {
+            delay: 0.1,
+            duration: 0.35,
+            ease: easeOut
+        }
     },
     click: {
 
+    }
+}
+
+const typingDotVrnt = {
+    initial: {
+        opacity: 0
+    }
+}
+const termLineVrnt = {
+    initial: {},
+    hover: {
+        transform: [
+            'translateX(0px) translateY(0px) rotate(0deg)',
+            'translateX(-2px) translateY(0px) rotate(-14deg)',
+            'translateX(40px) translateY(0px) rotate(0deg)',
+        ],
+        transition: {
+            duration: 0.5,
+            times: [0, 0.6, 1],
+            ease: easeOut
+        }
+    },
+    restoreInitial: {
+        transform: [
+            'translateX(40px) translateY(0px) rotate(0deg)',
+            'translateX(2px) translateY(0px) rotate(14deg)',
+            'translateX(0px) translateY(0px) rotate(0deg)',
+        ],
+        transition: {
+            delay: 0.24,
+            duration: 0.3,
+            times: [0, 0.6, 1],
+            ease: easeOut
+        }
+    }
+}
+const termArrowVrnt = {
+    initial: {},
+    hover: {
+        transform: [
+            'translateX(0px) translateY(0px) rotate(0deg)',
+            'translateX(-2px) translateY(0px) rotate(-14deg)',
+            'translateX(80px) translateY(0px) rotate(0deg)',
+        ],
+        transition: {
+            delay: 0.24,
+            duration: 0.5,
+            times: [0, 0.6, 1],
+            ease: easeOut
+        },
+    },
+    restoreInitial: {
+        transform: [
+            'translateX(80px) translateY(0px) rotate(0deg)',
+            'translateX(2px) translateY(0px) rotate(14deg)',
+            'translateX(0px) translateY(0px) rotate(0deg)',
+        ],
+        transition: {
+            // delay: 0.24,
+            duration: 0.3,
+            times: [0, 0.6, 1],
+            ease: easeOut
+        },
     }
 }
