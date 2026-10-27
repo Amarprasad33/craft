@@ -6,8 +6,6 @@ import { easeOut, motion } from 'motion/react';
 import { useAnimateVariant } from "@/lib/hooks/use-animate-variant";
 
 
-
-
 export default function TerminalAnimation() {
     return (
         <div className="w-full min-h-screen flex justify-center bg-white  items-center text-red-600">
@@ -74,18 +72,6 @@ const TerminalIcon = () => {
     const handleClick = async () => {
        
     }
-
-    // useEffect(() => {
-        // scope.current?.querySelectorAll("[data-animate='typing-dot']").forEach((line, index: number) => {
-        //     animate(
-        //         line,
-        //         {
-        //             opacity: 0,
-        //         },
-        //         {} // transition props
-        //     )
-        // });
-    // }, [])
     
 
     return (
@@ -117,14 +103,14 @@ const TerminalIcon = () => {
                     <motion.circle data-animate="typing-dot" initial={typingDotVrnt.initial} cx="74.1562" cy="59.7188" r="1.96875" fill="#989898"/>
                     <motion.circle data-animate="typing-dot" initial={typingDotVrnt.initial} cx="82.0312" cy="59.7188" r="1.96875" fill="#989898"/>
                 </g>
-                {/* <g>
+                <g>
                     <path d="M15.0938 16.4062H38.7188" strokeWidth="3.9375" strokeLinecap="round" stroke="#989898"/>
                     <path d="M15.0938 24.2812H53.1562" strokeWidth="3.9375" strokeLinecap="round" stroke="#989898"/>
                     <path d="M15.0938 32.1562H66.2812" strokeWidth="3.9375" strokeLinecap="round" stroke="#989898"/>
                     <path d="M15.0938 40.0312H62.3438" strokeWidth="3.9375" strokeLinecap="round" stroke="#989898"/>
                     <path d="M15.0938 47.9062H68.9062" strokeWidth="3.9375" strokeLinecap="round" stroke="#989898"/>
                     <path d="M18.7472 55.0412C19.0702 54.1683 20.3048 54.1683 20.6278 55.0412L21.3 56.8576C21.4015 57.1321 21.6179 57.3485 21.8924 57.45L23.7088 58.1222C24.5817 58.4452 24.5817 59.6798 23.7088 60.0028L21.8924 60.675C21.6179 60.7765 21.4015 60.9929 21.3 61.2674L20.6278 63.0838C20.3048 63.9567 19.0702 63.9567 18.7472 63.0838L18.075 61.2674C17.9735 60.9929 17.7571 60.7765 17.4826 60.675L15.6662 60.0028C14.7933 59.6798 14.7933 58.4452 15.6662 58.1222L17.4826 57.45C17.7571 57.3485 17.9735 57.1321 18.075 56.8576L18.7472 55.0412Z" fill="#989898"/>
-                </g> */}
+                </g>
             </motion.g>
         </svg>
     )
