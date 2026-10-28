@@ -19,13 +19,16 @@ const TerminalIcon = () => {
     const hoverDisabledRef = useRef(false);
     const [scope, animateVariant, animate] = useAnimateVariant();
     const animationControlsRef = useRef<AnimationPlaybackControls[]>([]);
-    const clickDone = useRef(false);
+    const clickRunning = useRef(false);
+    const isHovered = useRef(false);
+    const termRestoreRunning = useRef(false);
 
     const { handleMouseEnter, handleMouseLeave } = useHoverTimeout({
         delay: 100,
         disabledRef: hoverDisabledRef,
         onHoverStart: async () => {
-            console.log("hover call");
+            // console.log("hover call");
+            isHovered.current = true;
             animateVariant("[data-animate='term-line']", termLineVrnt.hover)
             await animateVariant("[data-animate='term-arrow']", termArrowVrnt.hover)
 
@@ -48,7 +51,8 @@ const TerminalIcon = () => {
         onHoverEnd: async () => {
             // Stop/restore the running animations
             // Only run this when click has not happened - otherwise skip
-            if(clickDone.current) return;
+            isHovered.current = false;
+            if(clickRunning.current) return;
             console.log("LEAVE")
             scope.current?.querySelectorAll("[data-animate='typing-dot']").forEach((circle, index: number) => {
                 animate(
@@ -63,10 +67,7 @@ const TerminalIcon = () => {
             });
             animateVariant("[data-animate='input-bar']", inputBarVrnt.initial)
 
-            
-
-            animateVariant("[data-animate='term-arrow']", termArrowVrnt.restoreInitial)
-            animateVariant("[data-animate='term-line']", termLineVrnt.restoreInitial)
+            await restoreTermState();
 
            
         }
@@ -76,7 +77,7 @@ const TerminalIcon = () => {
     const handleClick = async () => {
         /* Click animation in progress */
         // typing-state - reverse
-        clickDone.current = true;
+        clickRunning.current = true;
         scope.current?.querySelectorAll("[data-animate='typing-dot']").forEach((circle, index: number) => {
             animate(
                 circle,
@@ -130,15 +131,36 @@ const TerminalIcon = () => {
         await Promise.all(runningAnimations);
         animateVariant("[data-animate='sparkle']", sparkleVrnt.initial)
 
-        // Restoring 1st state after click animation complete
-        animateVariant("[data-animate='term-arrow']", termArrowVrnt.restoreInitial)
-        await animateVariant("[data-animate='term-line']", termLineVrnt.restoreInitial)
-
         console.log("CLICK ------ DONE")
-        clickDone.current = false;
+        clickRunning.current = false;
 
+        // Restore only if the cursor has already left.
+        if (!isHovered.current) {
+            await restoreTermState();
+        }
 
     }
+
+    const restoreTermState = async () => {
+        if (termRestoreRunning.current) return;
+      
+        termRestoreRunning.current = true;
+      
+        try {
+          await Promise.all([
+            animateVariant(
+              "[data-animate='term-arrow']",
+              termArrowVrnt.restoreInitial
+            ),
+            animateVariant(
+              "[data-animate='term-line']",
+              termLineVrnt.restoreInitial
+            ),
+          ]);
+        } finally {
+          termRestoreRunning.current = false;
+        }
+      };
     
 
     return (
@@ -280,10 +302,6 @@ const sparkleVrnt = {
             duration: 0.3,
             ease: easeOut
         }
-        /**
-         translateX(-14px) translateY(20px) rotate(40deg)
-         translateX(1px) translateY(0px) rotate(40deg)    // scale-15
-         */
     },
     finalSwirl: {
         transform: [
