@@ -19,6 +19,7 @@ const TerminalIcon = () => {
     const hoverDisabledRef = useRef(false);
     const [scope, animateVariant, animate] = useAnimateVariant();
     const animationControlsRef = useRef<AnimationPlaybackControls[]>([]);
+    const clickDone = useRef(false);
 
     const { handleMouseEnter, handleMouseLeave } = useHoverTimeout({
         delay: 100,
@@ -46,6 +47,9 @@ const TerminalIcon = () => {
         },
         onHoverEnd: async () => {
             // Stop/restore the running animations
+            // Only run this when click has not happened - otherwise skip
+            if(clickDone.current) return;
+            console.log("LEAVE")
             scope.current?.querySelectorAll("[data-animate='typing-dot']").forEach((circle, index: number) => {
                 animate(
                     circle,
@@ -65,31 +69,74 @@ const TerminalIcon = () => {
             animateVariant("[data-animate='term-line']", termLineVrnt.restoreInitial)
 
            
-            // animateVariant("[data-animate='sun']", sunVariants.exit)
         }
     })
 
 
     const handleClick = async () => {
         /* Click animation in progress */
-        // const runningAnimations: any  = [];
-        // scope.current?.querySelectorAll("[data-animate='result-bar']").forEach((circle, index: number) => {
-        //     runningAnimations.push(
-        //         animate(
-        //             circle,
-        //             {
-        //                 strokeDashoffset: '0px',
-        //             },
-        //             {
-        //                delay: 0.15*index
-        //             }
-        //         )
-        //     )
-        // });
-        // await Promise.all(runningAnimations);
-        // console.log("click-bars-done")
+        // typing-state - reverse
+        clickDone.current = true;
+        scope.current?.querySelectorAll("[data-animate='typing-dot']").forEach((circle, index: number) => {
+            animate(
+                circle,
+                {
+                    opacity: 0,
+                },
+                {
+                   delay: 0.0005*(11-index)
+                }
+            )
+        });
+        animateVariant("[data-animate='input-bar']", inputBarVrnt.initial)
+        // typing-state - reverse
 
-        // animateVariant("[data-animate='sparkle']", sparkleVrnt.click)
+        let runningAnimations: any  = [];
+        scope.current?.querySelectorAll("[data-animate='result-bar']").forEach((circle, index: number) => {
+            runningAnimations.push(
+                animate(
+                    circle,
+                    {
+                        strokeDashoffset: '0px',
+                    },
+                    {
+                       delay: 0.15*index
+                    }
+                )
+            )
+        });
+        await Promise.all(runningAnimations);
+        console.log("click-bars-done")
+
+        runningAnimations = [];
+        await animateVariant("[data-animate='sparkle']", sparkleVrnt.click)
+        
+        animateVariant("[data-animate='sparkle']", sparkleVrnt.finalSwirl)
+        
+        //reseting the bars for init state
+        scope.current?.querySelectorAll("[data-animate='result-bar']").forEach((circle, index: number) => {
+            runningAnimations.push(
+                animate(
+                    circle,
+                    {
+                        strokeDashoffset: '53px',
+                    },
+                    {
+                        delay: 0.02*index
+                    }
+                )
+            )
+        });
+        await Promise.all(runningAnimations);
+        animateVariant("[data-animate='sparkle']", sparkleVrnt.initial)
+
+        // Restoring 1st state after click animation complete
+        animateVariant("[data-animate='term-arrow']", termArrowVrnt.restoreInitial)
+        await animateVariant("[data-animate='term-line']", termLineVrnt.restoreInitial)
+
+        console.log("CLICK ------ DONE")
+        clickDone.current = false;
+
 
     }
     
@@ -102,7 +149,7 @@ const TerminalIcon = () => {
                 onMouseLeave={handleMouseLeave}
                 onClick={handleClick}
             >
-                <rect width="84" height="84" rx="21" fill="#F3F3F3"/>
+                <rect width="84" height="84" rx="0" fill="#F3F3F3"/>
                 <g>
                     <path data-animate="term-arrow" d="M24.9375 28.875L37.1344 41.0719C37.647 41.5845 37.647 42.4155 37.1344 42.9281L24.9375 55.125" strokeWidth="6.5625" strokeLinecap="round" stroke="#989898"/>
                     <path data-animate="term-line" d="M47.9062 55.125H62.3438" strokeWidth="6.5625" strokeLinecap="round" stroke="#989898"/>
@@ -219,16 +266,36 @@ const termArrowVrnt = {
 const sparkleVrnt = {
     initial: {
         opacity: 0,
-        rotate: -130,
+        transform: 'translateX(0px) translateY(0px) rotate(-130deg) scale(1)',
+        // rotate: -130,
         filter: 'blur(4px)'
     },
     click: {
         opacity: 1,
-        rotate: 0,
+        // rotate: 0,
+        transform: 'translateX(0px) translateY(0px) rotate(0deg) scale(1)',
         filter: 'blur(0px)',
         transition: {
             // delay: 0.24,
             duration: 0.3,
+            ease: easeOut
+        }
+        /**
+         translateX(-14px) translateY(20px) rotate(40deg)
+         translateX(1px) translateY(0px) rotate(40deg)    // scale-15
+         */
+    },
+    finalSwirl: {
+        transform: [
+            'translateX(0px) translateY(0px) rotate(0deg) scale(1)',
+            'translateX(-6px) translateY(20px) rotate(40deg) scale(23)',
+            'translateX(-6px) translateY(20px) rotate(80deg) scale(23)',
+        ],
+        opacity: [1, 1, 0],
+        filter: ['blur(0px)', 'blur(0px)', 'blur(4px)'],
+        transition: {
+            duration: 0.6,
+            // times: [0, 0.2, 0.6, 1],
             ease: easeOut
         }
     }
