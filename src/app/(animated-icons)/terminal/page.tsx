@@ -23,17 +23,29 @@ const TerminalIcon = () => {
     const isHovered = useRef(false);
     const termRestoreRunning = useRef(false);
 
+    const hoverRunId = useRef(0);
+
     const { handleMouseEnter, handleMouseLeave } = useHoverTimeout({
         delay: 100,
         disabledRef: hoverDisabledRef,
         onHoverStart: async () => {
             // console.log("hover call");
+            if(clickRunning.current) return;
+
+            isHovered.current = true;
+            const runId = ++hoverRunId.current;
+
+            const isCancelled = () => runId !== hoverRunId.current || !isHovered.current || clickRunning.current; // hover seq. cancelled
+
             isHovered.current = true;
             animateVariant("[data-animate='term-line']", termLineVrnt.hover)
             await animateVariant("[data-animate='term-arrow']", termArrowVrnt.hover)
 
+            if (isCancelled()) return;
+
             // typing state
             await animateVariant("[data-animate='input-bar']", inputBarVrnt.hover)
+            if (isCancelled()) return;
 
             scope.current?.querySelectorAll("[data-animate='typing-dot']").forEach((circle, index: number) => {
                 animate(
@@ -52,6 +64,7 @@ const TerminalIcon = () => {
             // Stop/restore the running animations
             // Only run this when click has not happened - otherwise skip
             isHovered.current = false;
+            ++hoverRunId.current; // Invalidate pending hover steps.
             if(clickRunning.current) return;
             console.log("LEAVE")
             scope.current?.querySelectorAll("[data-animate='typing-dot']").forEach((circle, index: number) => {
@@ -75,9 +88,12 @@ const TerminalIcon = () => {
 
 
     const handleClick = async () => {
+        if (clickRunning.current) return;
         /* Click animation in progress */
         // typing-state - reverse
         clickRunning.current = true;
+        ++hoverRunId.current;
+        // Stopping hover animation sequence
         scope.current?.querySelectorAll("[data-animate='typing-dot']").forEach((circle, index: number) => {
             animate(
                 circle,
