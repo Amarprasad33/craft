@@ -29,6 +29,7 @@ const FactoryIconV2 = () => {
     const controls: AnimationPlaybackControls[] = [];
     const stopSteamControls: AnimationPlaybackControls[] = [];
     const hoverAnimationCompleted = useRef(true);
+    const backgroundRef = useRef<SVGPathElement>(null);
 
 
     const animateSteam = async () => {
@@ -70,7 +71,11 @@ const FactoryIconV2 = () => {
     };
 
     const handleClickAnimations = () => {
-        
+        if (backgroundRef.current) {
+            const { transform, transition } = backgroundVariants.click;
+            animate(backgroundRef.current, { transform }, transition);
+        }
+
         scope.current?.querySelectorAll("[data-animate='ray']")
             .forEach((line: SVGLineElement, index: number) => {
 
@@ -161,62 +166,66 @@ const FactoryIconV2 = () => {
     }, []);
 
     return (
-        <motion.svg width="43" height="43" style={{ scale: 2 }} viewBox="0 0 43 43" fill="none" xmlns="http://www.w3.org/2000/svg" 
+        <motion.svg width="85" height="62" style={{ scale: 2 }} viewBox="0 0 85 62" fill="none" xmlns="http://www.w3.org/2000/svg" 
             onMouseEnter={animateSteam}
             onMouseLeave={stopSteam}
             onClick={handleClickAnimations}
         >
-            <path d="M25.8418 24.8776C25.5105 25.6338 26.4045 26.3341 27.0593 25.8313L36.7029 18.4268C37.0634 18.15 37.5052 18 37.9597 18C38.9217 18 39.7016 18.7799 39.7016 19.7419V37.2339C39.7016 38.1959 38.9217 38.9758 37.9597 38.9758H10.7419C9.77989 38.9758 9 38.1959 9 37.2339V34.8866C9 33.0878 10.4955 31.6504 11.7798 30.3909L23.9542 18.6192C24.365 18.222 24.914 18 25.4854 18C27.0745 18 28.1408 19.6314 27.503 21.0869L25.8418 24.8776Z" fill="#D1D2D4" />
-            <AnimatePresence mode="popLayout">
-                <motion.g ref={scope} >
-                    <motion.path
-                        data-animate="line"
-                        d="M5.76209 14.1129C4.96371 13.5685 5.03629 12.1169 5.94355 10.7379C6.85081 9.35887 5.61694 7.47177 5 7"
-                        stroke="#C9C9C9"
-                        strokeLinecap="round"
-                        strokeDasharray="7.11px 8.5px"
-                        strokeDashoffset="8px"
-                        pathLength="7.11"
+            <motion.path ref={backgroundRef} data-animate="background" initial={backgroundVariants.initial} d="M14.0546 62C4.68486 62 0 57.3151 0 47.9454V26.323C0 21.2777 2.00008 17.2163 6.00023 14.1387L22.1089 1.74907C26.1091 -1.32853 28.1092 -0.344706 28.1092 4.70053V13.3495C28.1092 16.9532 29.5381 17.656 32.3958 15.4577L50.2181 1.74907C54.2183 -1.32853 56.2183 -0.344706 56.2183 4.70053V13.3495C56.2183 16.9532 57.6472 17.656 60.505 15.4577L78.3273 1.74907C82.3274 -1.32853 84.3275 -0.344706 84.3275 4.70053V47.9454C84.3275 57.3151 79.6427 62 70.2729 62H14.0546Z" fill="#F3F3F3" />
+            {/* Factory sits at (21, 17) on the bg - same offset as the reference svg */}
+            <g transform="translate(21 17)">
+                <path d="M25.8418 24.8776C25.5105 25.6338 26.4045 26.3341 27.0593 25.8313L36.7029 18.4268C37.0634 18.15 37.5052 18 37.9597 18C38.9217 18 39.7016 18.7799 39.7016 19.7419V37.2339C39.7016 38.1959 38.9217 38.9758 37.9597 38.9758H10.7419C9.77989 38.9758 9 38.1959 9 37.2339V34.8866C9 33.0878 10.4955 31.6504 11.7798 30.3909L23.9542 18.6192C24.365 18.222 24.914 18 25.4854 18C27.0745 18 28.1408 19.6314 27.503 21.0869L25.8418 24.8776Z" fill="#DFDFDF" />
+                <AnimatePresence mode="popLayout">
+                    <motion.g ref={scope} >
+                        <motion.path
+                            data-animate="line"
+                            d="M5.76209 14.1129C4.96371 13.5685 5.03629 12.1169 5.94355 10.7379C6.85081 9.35887 5.61694 7.47177 5 7"
+                            stroke="#C9C9C9"
+                            strokeLinecap="round"
+                            strokeDasharray="7.11px 8.5px"
+                            strokeDashoffset="8px"
+                            pathLength="7.11"
 
-                    />
-                    <motion.path
-                        data-animate="line"
-                        d="M8.99328 13.6371C8.59407 13.0565 7.92075 11.2794 8.70295 9.89919C10.346 7 6.34595 7.5 8.8459 4"
-                        stroke="#C9C9C9"
-                        strokeWidth="1.2"
-                        strokeLinecap="round"
-                        strokeDasharray="9.64px 11px"
-                        strokeDashoffset="10px"
-                        pathLength="9.64"
+                        />
+                        <motion.path
+                            data-animate="line"
+                            d="M8.99328 13.6371C8.59407 13.0565 7.92075 11.2794 8.70295 9.89919C10.346 7 6.34595 7.5 8.8459 4"
+                            stroke="#C9C9C9"
+                            strokeWidth="1.2"
+                            strokeLinecap="round"
+                            strokeDasharray="9.64px 11px"
+                            strokeDashoffset="10px"
+                            pathLength="9.64"
 
-                    />
-                    <motion.path
-                        data-animate="line"
-                        d="M12.5035 14.1129C13.3019 13.5685 13.2293 12.1169 12.3221 10.7379C11.4148 9.35887 12.6487 7.47177 13.2656 7"
-                        stroke="#C9C9C9"
-                        strokeLinecap="round"
-                        strokeDasharray="7.11px 8.5px"
-                        strokeDashoffset="8px"
-                        pathLength="7.11"
+                        />
+                        <motion.path
+                            data-animate="line"
+                            d="M12.5035 14.1129C13.3019 13.5685 13.2293 12.1169 12.3221 10.7379C11.4148 9.35887 12.6487 7.47177 13.2656 7"
+                            stroke="#C9C9C9"
+                            strokeLinecap="round"
+                            strokeDasharray="7.11px 8.5px"
+                            strokeDashoffset="8px"
+                            pathLength="7.11"
 
-                    />
-
-
-                    <motion.line data-animate="ray" strokeDasharray="2.24px 3px" strokeDashoffset="0px" x1="22.25" y1="27.95" x2="22.25" y2="29.686" stroke="#666666" strokeWidth="0.5" strokeLinecap="round"/>
-                    <motion.line data-animate="ray" strokeDasharray="2.24px 3px" strokeDashoffset="0px" x1="25.0657" y1="28.1391" x2="24.3321" y2="29.7125" stroke="#666666" strokeWidth="0.5" strokeLinecap="round"/>
-                    <motion.line data-animate="ray" strokeDasharray="2.24px 3px" strokeDashoffset="0px" x1="0.25" y1="-0.25" x2="1.98607" y2="-0.25" transform="matrix(0.422618 0.906308 0.906308 -0.422618 19.3999 27.8069)" stroke="#666666" strokeWidth="0.5" strokeLinecap="round"/>
-                    <motion.line data-animate="ray" strokeDasharray="2.24px 3px" strokeDashoffset="0px" x1="33.3501" y1="27.95" x2="33.3501" y2="29.686" stroke="#666666" strokeWidth="0.5" strokeLinecap="round"/>
-                    <motion.line data-animate="ray" strokeDasharray="2.24px 3px" strokeDashoffset="0px" x1="36.1658" y1="28.1391" x2="35.4322" y2="29.7125" stroke="#666666" strokeWidth="0.5" strokeLinecap="round"/>
-                    <motion.line data-animate="ray" strokeDasharray="2.24px 3px" strokeDashoffset="0px" x1="0.25" y1="-0.25" x2="1.98607" y2="-0.25" transform="matrix(0.422618 0.906308 0.906308 -0.422618 30.5 27.8069)" stroke="#666666" strokeWidth="0.5" strokeLinecap="round"/>
+                        />
 
 
-                    <rect x="19.605" y="30.7178" width="5.08065" height="3.19355" rx="1.16129" fill="#969697" />
-                    <rect x="30.7097" y="30.7178" width="5.08065" height="3.19355" rx="1.16129" fill="#969697" />
+                        <motion.line data-animate="ray" strokeDasharray="2.24px 3px" strokeDashoffset="0px" x1="22.25" y1="27.95" x2="22.25" y2="29.686" stroke="#666666" strokeWidth="0.5" strokeLinecap="round"/>
+                        <motion.line data-animate="ray" strokeDasharray="2.24px 3px" strokeDashoffset="0px" x1="25.0657" y1="28.1391" x2="24.3321" y2="29.7125" stroke="#666666" strokeWidth="0.5" strokeLinecap="round"/>
+                        <motion.line data-animate="ray" strokeDasharray="2.24px 3px" strokeDashoffset="0px" x1="0.25" y1="-0.25" x2="1.98607" y2="-0.25" transform="matrix(0.422618 0.906308 0.906308 -0.422618 19.3999 27.8069)" stroke="#666666" strokeWidth="0.5" strokeLinecap="round"/>
+                        <motion.line data-animate="ray" strokeDasharray="2.24px 3px" strokeDashoffset="0px" x1="33.3501" y1="27.95" x2="33.3501" y2="29.686" stroke="#666666" strokeWidth="0.5" strokeLinecap="round"/>
+                        <motion.line data-animate="ray" strokeDasharray="2.24px 3px" strokeDashoffset="0px" x1="36.1658" y1="28.1391" x2="35.4322" y2="29.7125" stroke="#666666" strokeWidth="0.5" strokeLinecap="round"/>
+                        <motion.line data-animate="ray" strokeDasharray="2.24px 3px" strokeDashoffset="0px" x1="0.25" y1="-0.25" x2="1.98607" y2="-0.25" transform="matrix(0.422618 0.906308 0.906308 -0.422618 30.5 27.8069)" stroke="#666666" strokeWidth="0.5" strokeLinecap="round"/>
 
-                </motion.g>
-            </AnimatePresence>
 
-            <motion.path d={barPath} fill="#969697" />
+                        <rect x="19.605" y="30.7178" width="5.08065" height="3.19355" rx="1.16129" fill="#969697" />
+                        <rect x="30.7097" y="30.7178" width="5.08065" height="3.19355" rx="1.16129" fill="#969697" />
+
+                    </motion.g>
+                </AnimatePresence>
+
+                <motion.path d={barPath} fill="#969697" />
+            </g>
 
 
         </motion.svg>
@@ -225,22 +234,39 @@ const FactoryIconV2 = () => {
 
 
 
+// Same press squish as the other icons' backgrounds
+const backgroundVariants = {
+    initial: {
+        transform: "scale(1)",
+    },
+    click: {
+        transform: ["scale(1)", "scale(0.97)", "scale(1.01)", "scale(1)"],
+        transition: {
+            duration: 0.45,
+            times: [0, 0.3, 0.65, 1],
+            ease: easeOut,
+        },
+    },
+};
+
 export default FactoryIconV2;
 
 // Factory with BG shape
-{/* <svg width="234" height="234" viewBox="0 0 234 234" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M81.1898 107.739C73.3757 90.8468 90.8469 73.3756 107.739 81.1898L116.673 85.3226L125.607 81.1898C142.498 73.3756 159.97 90.8469 152.155 107.739L148.023 116.673L152.155 125.607C159.97 142.498 142.498 159.97 125.607 152.155L116.673 148.023L107.739 152.155C90.8469 159.97 73.3757 142.498 81.1898 125.607L85.3226 116.673L81.1898 107.739Z" fill="#F4F4F4"/>
-<path d="M122.014 115.05C121.683 115.806 122.577 116.507 123.232 116.004L132.876 108.599C133.236 108.323 133.678 108.173 134.132 108.173C135.094 108.173 135.874 108.952 135.874 109.915V127.406C135.874 128.369 135.094 129.148 134.132 129.148H106.915C105.952 129.148 105.173 128.369 105.173 127.406V125.059C105.173 123.26 106.668 121.823 107.952 120.564L120.127 108.792C120.538 108.395 121.087 108.173 121.658 108.173C123.247 108.173 124.313 109.804 123.676 111.259L122.014 115.05Z" fill="#E5E5E5"/>
-<path d="M101.935 104.286C101.136 103.741 101.209 102.29 102.116 100.911C103.023 99.5315 101.79 97.6444 101.173 97.1726" stroke="#C9C9C9" stroke-linecap="round"/>
-<path d="M108.676 104.286C109.475 103.741 109.402 102.29 108.495 100.911C107.587 99.5315 108.821 97.6444 109.438 97.1726" stroke="#C9C9C9" stroke-linecap="round"/>
-<path d="M105.166 103.81C104.767 103.229 104.093 101.452 104.876 100.072C106.519 97.1726 102.519 97.6726 105.019 94.1726" stroke="#C9C9C9" stroke-width="1.2" stroke-linecap="round"/>
-<path d="M100.755 109.212C100.936 106.931 102.839 105.173 105.127 105.173C107.407 105.173 109.307 106.92 109.497 109.192L110.962 126.656C111.075 128.01 110.006 129.173 108.647 129.173H101.687C100.332 129.173 99.2642 128.017 99.3713 126.666L100.755 109.212Z" fill="#969697"/>
-<rect x="115.778" y="120.89" width="5.08065" height="3.19355" rx="1.16129" fill="#969697"/>
-<rect x="126.882" y="120.89" width="5.08065" height="3.19355" rx="1.16129" fill="#969697"/>
-<line x1="118.423" y1="118.123" x2="118.423" y2="119.859" stroke="#666666" stroke-width="0.5" stroke-linecap="round"/>
-<line x1="121.238" y1="118.312" x2="120.505" y2="119.885" stroke="#666666" stroke-width="0.5" stroke-linecap="round"/>
-<line x1="0.25" y1="-0.25" x2="1.98607" y2="-0.25" transform="matrix(0.422618 0.906308 0.906308 -0.422618 115.573 117.98)" stroke="#666666" stroke-width="0.5" stroke-linecap="round"/>
-<line x1="129.523" y1="118.123" x2="129.523" y2="119.859" stroke="#666666" stroke-width="0.5" stroke-linecap="round"/>
-<line x1="132.338" y1="118.312" x2="131.605" y2="119.885" stroke="#666666" stroke-width="0.5" stroke-linecap="round"/>
-<line x1="0.25" y1="-0.25" x2="1.98607" y2="-0.25" transform="matrix(0.422618 0.906308 0.906308 -0.422618 126.673 117.98)" stroke="#666666" stroke-width="0.5" stroke-linecap="round"/>
+
+{/* <svg width="85" height="62" viewBox="0 0 85 62" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M14.0546 62C4.68486 62 0 57.3151 0 47.9454V26.323C0 21.2777 2.00008 17.2163 6.00023 14.1387L22.1089 1.74907C26.1091 -1.32853 28.1092 -0.344706 28.1092 4.70053V13.3495C28.1092 16.9532 29.5381 17.656 32.3958 15.4577L50.2181 1.74907C54.2183 -1.32853 56.2183 -0.344706 56.2183 4.70053V13.3495C56.2183 16.9532 57.6472 17.656 60.505 15.4577L78.3273 1.74907C82.3274 -1.32853 84.3275 -0.344706 84.3275 4.70053V47.9454C84.3275 57.3151 79.6427 62 70.2729 62H14.0546Z" fill="#F3F3F3"/>
+<path d="M46.8418 41.8776C46.5105 42.6338 47.4045 43.3341 48.0593 42.8313L57.7029 35.4268C58.0634 35.15 58.5052 35 58.9597 35C59.9217 35 60.7016 35.7799 60.7016 36.7419V54.2339C60.7016 55.1959 59.9217 55.9758 58.9597 55.9758H31.7419C30.7799 55.9758 30 55.1959 30 54.2339V51.8866C30 50.0878 31.4955 48.6504 32.7798 47.3909L44.9542 35.6192C45.365 35.222 45.914 35 46.4854 35C48.0745 35 49.1408 36.6314 48.503 38.0869L46.8418 41.8776Z" fill="#DFDFDF"/>
+<path d="M26.7621 31.1129C25.9637 30.5685 26.0363 29.1169 26.9435 27.7379C27.8508 26.3589 26.6169 24.4718 26 24" stroke-linecap="round" stroke="#C9C9C9"/>
+<path d="M33.5036 31.1129C34.302 30.5685 34.2294 29.1169 33.3221 27.7379C32.4149 26.3589 33.6488 24.4718 34.2657 24" stroke-linecap="round" stroke="#C9C9C9"/>
+<path d="M29.9933 30.6371C29.5941 30.0565 28.9208 28.2794 29.703 26.8992C31.346 24 27.3459 24.5 29.8459 21" stroke-width="1.2" stroke-linecap="round" stroke="#C9C9C9"/>
+<path d="M25.5823 36.0392C25.763 33.7586 27.6665 32 29.9543 32C32.2345 32 34.1343 33.7472 34.3248 36.0194L35.789 53.4834C35.9026 54.8379 34.8338 56 33.4745 56H26.514C25.1589 56 24.0916 54.8447 24.1987 53.4939L25.5823 36.0392Z" fill="#969697"/>
+<rect x="40.6049" y="47.7178" width="5.08065" height="3.19355" rx="1.16129" fill="#969697"/>
+<rect x="51.7097" y="47.7178" width="5.08065" height="3.19355" rx="1.16129" fill="#969697"/>
+<path d="M43.25 44.9502L43.25 46.6863" stroke-width="0.5" stroke-linecap="round" stroke="#666666"/>
+<path d="M46.0657 45.1394L45.3321 46.7128" stroke-width="0.5" stroke-linecap="round" stroke="#666666"/>
+<path d="M40.279 45.1394L41.0127 46.7128" stroke-width="0.5" stroke-linecap="round" stroke="#666666"/>
+<path d="M54.3501 44.9502L54.3501 46.6863" stroke-width="0.5" stroke-linecap="round" stroke="#666666"/>
+<path d="M57.1658 45.1394L56.4322 46.7128" stroke-width="0.5" stroke-linecap="round" stroke="#666666"/>
+<path d="M51.3791 45.1394L52.1128 46.7128" stroke-width="0.5" stroke-linecap="round" stroke="#666666"/>
 </svg> */}
+
