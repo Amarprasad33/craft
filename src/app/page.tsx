@@ -1,21 +1,41 @@
+import Link from "next/link";
+import CatAnimation from "@/app/(animated-icons)/cat/page";
+import FactoryPage from "@/app/(animated-icons)/factory/page";
+import WeatherPage from "@/app/(animated-icons)/weather/page";
+
+// Each icon page wraps itself in a full-screen centering div.
+// Neutralise that wrapper so the icon only takes its own size.
+const unwrap =
+  "[&>div]:min-h-0 [&>div]:w-auto [&>div]:overflow-visible [&>div]:bg-transparent";
+
+const works = [
+  {
+    href: "/showcase",
+    title: "Animated icons",
+    subtitle: "Small icons with idle, hover and click states, built in motion.",
+    preview: <IconsArtwork />,
+  },
+];
+
 export default function Home() {
   return (
-    <main className="flex flex-col flex-1 pb-32">
-      <Nav />
-      <section className="px-12 pt-16">
-        <div className="mx-auto w-full max-w-[1098px] flex flex-col gap-12">
+    <main className="flex flex-1 flex-col pb-24 sm:pb-32">
+      <header className="flex w-full items-center justify-between px-4 pt-6 sm:px-12 sm:pt-8">
+        <Logo />
+        <Link
+          href="/reference"
+          className="text-[15px] leading-[18px] text-zinc-400 transition-colors hover:text-white"
+        >
+          Reference
+        </Link>
+      </header>
+      <section className="px-4 pt-12 sm:px-12 sm:pt-16">
+        <div className="mx-auto flex w-full max-w-[1098px] flex-col gap-8 sm:gap-12">
           <SectionPill label="Design Craft" />
-          <div className="flex flex-col gap-12">
-            <Row>
-              <CardLinear />
-              <CardStripePress />
-              <CardEasing />
-            </Row>
-            <Row>
-              <CardPhone />
-              <CardEditor />
-              <CardQuote />
-            </Row>
+          <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 sm:gap-y-12 lg:grid-cols-3">
+            {works.map((work) => (
+              <Card key={work.href} {...work} />
+            ))}
           </div>
         </div>
       </section>
@@ -23,309 +43,125 @@ export default function Home() {
   );
 }
 
-function Nav() {
+// Mandala mark: a dark pupil with a gold dot, a ring of fine rays,
+// a ring of lotus petals and two layered 16-point stars around it.
+const GOLD = "#E3C397";
+const C = 50;
+
+const polar = (r: number, deg: number) => {
+  const a = ((deg - 90) * Math.PI) / 180;
+  return `${(C + r * Math.cos(a)).toFixed(2)} ${(C + r * Math.sin(a)).toFixed(2)}`;
+};
+
+// A pointed, ogee-like petal: full at the base, pinched into a sharp tip.
+const petal = (deg: number, base: number, tip: number, spread: number) => {
+  const mid = base + (tip - base) * 0.55;
   return (
-    <nav className="flex items-center justify-between w-full pt-8 px-12">
-      <Logo />
-      <ul className="flex items-center gap-9 text-[15px] leading-[18px] text-white">
-        <li>amar.md</li>
-        <li>Discord</li>
-        <li className="font-semibold">Lessons</li>
-        <li>Interviews</li>
-        <li>Vault</li>
-        <li className="flex items-center gap-1.5">
-          Account
-          <svg
-            width="10"
-            height="6"
-            viewBox="0 0 10 6"
-            fill="none"
-            aria-hidden
-          >
-            <path
-              d="M1 1L5 5L9 1"
-              stroke="currentColor"
-              strokeWidth="1.2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </li>
-      </ul>
-    </nav>
+    `M${polar(base, deg - spread)}` +
+    `C${polar(mid, deg - spread * 1.1)} ${polar(tip - (tip - base) * 0.25, deg - spread * 0.2)} ${polar(tip, deg)}` +
+    `C${polar(tip - (tip - base) * 0.25, deg + spread * 0.2)} ${polar(mid, deg + spread * 1.1)} ${polar(base, deg + spread)}`
   );
-}
+};
+
+const ring = (count: number, offset: number, base: number, tip: number, spread: number) =>
+  Array.from({ length: count }, (_, i) => petal(offset + (i * 360) / count, base, tip, spread)).join("");
+
+const OUTER_PETALS = ring(16, 0, 33, 48, 11.25);
+const OUTER_PETALS_INNER = ring(16, 0, 35, 43, 5);
+const BACK_PETALS = ring(16, 11.25, 32, 43, 11.25);
+const LOTUS = ring(24, 7.5, 26, 33, 7.5);
+const LOTUS_INNER = ring(24, 7.5, 27, 31, 3);
+const RAYS = Array.from({ length: 64 }, (_, i) => `M${polar(16, i * 5.625)}L${polar(i % 2 ? 23 : 25, i * 5.625)}`).join("");
 
 function Logo() {
   return (
-    <div
-      className="flex items-center justify-center size-14 rounded-[10px] shrink-0"
-      style={{
-        background: "linear-gradient(180deg, #FACC15 0%, #EAB308 100%)",
-        boxShadow:
-          "inset 0 -3px 0 rgba(0,0,0,0.12), 0 1px 0 rgba(255,255,255,0.15)",
-      }}
+    <svg
+      viewBox="0 0 100 100"
+      className="size-12 shrink-0 sm:size-14"
+      fill="none"
+      stroke={GOLD}
+      strokeLinejoin="round"
+      strokeLinecap="round"
+      role="img"
+      aria-label="Craft"
     >
-      <div
-        className="w-[34px] h-[42px] rounded-[3px] bg-white"
-        style={{ boxShadow: "0 1px 2px rgba(0,0,0,0.12)" }}
-      />
-    </div>
+      <path d={BACK_PETALS} fill="#0A0A0A" strokeWidth="1.1" opacity="0.75" />
+      <path d={OUTER_PETALS} fill="#0A0A0A" strokeWidth="1.4" />
+      <path d={OUTER_PETALS_INNER} strokeWidth="0.8" opacity="0.65" />
+      <circle cx={C} cy={C} r="34" fill="#0A0A0A" strokeWidth="0.8" opacity="0.6" />
+      <path d={LOTUS} fill="#0A0A0A" strokeWidth="1.1" />
+      <path d={LOTUS_INNER} strokeWidth="0.6" opacity="0.7" />
+      <circle cx={C} cy={C} r="25.5" strokeWidth="0.9" />
+      <path d={RAYS} strokeWidth="0.6" opacity="0.85" />
+      <circle cx={C} cy={C} r="15.5" fill="#000" strokeWidth="1.2" />
+      <circle cx={C} cy={C} r="1.8" fill={GOLD} stroke="none" />
+    </svg>
   );
 }
 
 function SectionPill({ label }: { label: string }) {
   return (
-    <div className="inline-flex self-start items-center rounded-full px-[18px] py-2 bg-[#161616] border border-[#242424]">
+    <div className="inline-flex items-center self-start rounded-full border border-[#242424] bg-[#161616] px-[18px] py-2">
       <span className="text-[15px] leading-[18px] text-white">{label}</span>
     </div>
   );
 }
 
-function Row({ children }: { children: React.ReactNode }) {
-  return <div className="flex gap-6">{children}</div>;
-}
-
 function Card({
+  href,
   preview,
   title,
   subtitle,
 }: {
+  href: string;
   preview: React.ReactNode;
   title: string;
   subtitle: string;
 }) {
   return (
-    <article className="flex flex-col gap-5 w-[349px] shrink-0">
-      <div className="relative h-[270px] rounded-[14px] overflow-hidden">
+    <Link
+      href={href}
+      className="group flex flex-col gap-5 rounded-[14px] outline-none focus-visible:ring-2 focus-visible:ring-[#FACC15] focus-visible:ring-offset-4 focus-visible:ring-offset-[#0A0A0A]"
+    >
+      <div className="relative aspect-[349/270] overflow-hidden rounded-[14px] transition-transform duration-300 ease-out group-hover:scale-[1.015] group-active:scale-[0.99]">
         {preview}
       </div>
       <div className="flex flex-col gap-1.5">
-        <h3 className="text-[20px] leading-[26px] font-semibold tracking-[-0.015em] text-white">
+        <h3 className="flex items-center gap-2 text-[20px] leading-[26px] font-semibold tracking-[-0.015em] text-white">
           {title}
+          <span
+            aria-hidden
+            className="text-zinc-500 transition-transform duration-300 ease-out group-hover:translate-x-1"
+          >
+            →
+          </span>
         </h3>
         <p className="text-[15px] leading-[22px] text-zinc-400">{subtitle}</p>
       </div>
-    </article>
+    </Link>
   );
 }
 
-function CardLinear() {
+// A static-feeling cut of the showcase: the icons run their idle loops,
+// but pointer events are off so the whole card reads as one link.
+function IconsArtwork() {
   return (
-    <Card
-      title="Linear, faithfully"
-      subtitle="A pixel-honest take on Linear's interface motion."
-      preview={
-        <div className="absolute inset-0 bg-[#F4F4F5] p-6 flex flex-col justify-between">
-          <div className="flex flex-col gap-3">
-            <div className="flex items-center gap-2">
-              <span className="size-2 rounded-full bg-[#5E6AD2]" />
-              <span className="font-mono text-[12px] text-[#5E6AD2] font-medium">
-                LIN-204
-              </span>
-            </div>
-            <h4 className="text-[17px] leading-[22px] font-semibold text-[#0A0A0A] tracking-[-0.01em]">
-              Fix easing on quick-action menu
-            </h4>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="px-2 py-1 rounded-md bg-[#FEE2D5] text-[#B4470A] text-[11px] font-medium">
-              In Progress
-            </span>
-            <span className="px-2 py-1 rounded-md border border-[#E4E4E7] text-[#52525B] text-[11px] font-medium">
-              Motion
-            </span>
-          </div>
+    <div className="pointer-events-none absolute inset-0 bg-white">
+      <div className="absolute left-[24%] top-[30%] -translate-x-1/2 -translate-y-1/2">
+        <div className={`${unwrap} scale-[0.6]`}>
+          <WeatherPage />
         </div>
-      }
-    />
-  );
-}
-
-function CardStripePress() {
-  return (
-    <Card
-      title="Stripe Press study"
-      subtitle="Editorial typography for screens that breathe."
-      preview={
-        <div className="absolute inset-0 bg-[#F4EFE6] p-6 flex flex-col justify-between">
-          <span className="text-[11px] font-medium tracking-[0.14em] text-[#6B6358] uppercase">
-            Stripe Press
-          </span>
-          <div className="flex flex-col gap-4">
-            <h4
-              className="text-[34px] leading-[38px] font-bold text-[#1A1A1A] tracking-[-0.02em]"
-              style={{ fontFamily: "Georgia, serif" }}
-            >
-              Ideas for
-              <br />
-              progress.
-            </h4>
-            <div className="flex gap-2">
-              <span className="size-5 bg-[#C84B31]" />
-              <span className="size-5 bg-[#2D5F3F]" />
-              <span className="size-5 bg-[#E8C547]" />
-              <span className="size-5 bg-[#1A1A1A]" />
-            </div>
-          </div>
+      </div>
+      <div className="absolute left-[74%] top-[34%] -translate-x-1/2 -translate-y-1/2">
+        <div className={`${unwrap} scale-[1.05]`}>
+          <CatAnimation />
         </div>
-      }
-    />
-  );
-}
-
-function CardEasing() {
-  return (
-    <Card
-      title="Easing curves, plotted"
-      subtitle="A small library of springs and curves I reach for daily."
-      preview={
-        <div className="absolute inset-0 bg-[#0A0A0A]">
-          <svg
-            className="absolute inset-0 w-full h-full"
-            viewBox="0 0 349 270"
-            preserveAspectRatio="none"
-            aria-hidden
-          >
-            {/* grid */}
-            <g stroke="rgba(255,255,255,0.05)" strokeWidth="1">
-              <line x1="0" y1="67" x2="349" y2="67" />
-              <line x1="0" y1="135" x2="349" y2="135" />
-              <line x1="0" y1="202" x2="349" y2="202" />
-              <line x1="87" y1="0" x2="87" y2="270" />
-              <line x1="174" y1="0" x2="174" y2="270" />
-              <line x1="261" y1="0" x2="261" y2="270" />
-            </g>
-            {/* curve */}
-            <path
-              d="M 30 220 C 120 220, 180 60, 320 50"
-              stroke="#FACC15"
-              strokeWidth="2.5"
-              fill="none"
-              strokeLinecap="round"
-            />
-            <circle cx="320" cy="50" r="5" fill="#FACC15" />
-          </svg>
+      </div>
+      <div className="absolute left-[42%] top-[74%] -translate-x-1/2 -translate-y-1/2">
+        <div className={`${unwrap} scale-[0.55]`}>
+          <FactoryPage />
         </div>
-      }
-    />
-  );
-}
-
-function CardPhone() {
-  return (
-    <Card
-      title="A music app, reimagined"
-      subtitle="Color, blur, and gesture as the interface."
-      preview={
-        <div className="absolute inset-0 bg-[#F4F4F5] flex items-end justify-center pt-8">
-          <div
-            className="w-[180px] h-[240px] rounded-t-[28px] relative overflow-hidden"
-            style={{
-              background:
-                "linear-gradient(180deg, #C7A6D9 0%, #E48BA8 50%, #F39B7A 100%)",
-              boxShadow: "0 -8px 24px rgba(0,0,0,0.08)",
-            }}
-          >
-            <div className="absolute inset-x-0 bottom-0 p-5 text-white">
-              <p className="text-[9px] font-medium tracking-[0.16em] opacity-80">
-                NOW PLAYING
-              </p>
-              <p className="text-[15px] font-semibold mt-1 leading-tight">
-                Slow Dancing
-              </p>
-              <p className="text-[11px] opacity-85 mt-0.5">V. Mortensen</p>
-              <div className="mt-3 h-[2px] bg-white/30 rounded-full overflow-hidden">
-                <div className="h-full w-[42%] bg-white rounded-full" />
-              </div>
-            </div>
-          </div>
-        </div>
-      }
-    />
-  );
-}
-
-function CardEditor() {
-  return (
-    <Card
-      title="Code-to-design pipeline"
-      subtitle="Translating React components into Paper artboards."
-      preview={
-        <div className="absolute inset-0 bg-[#F4F4F5] p-5 flex items-start justify-center pt-6">
-          <div className="w-full max-w-[280px] bg-white rounded-[10px] overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.06)]">
-            <div className="flex items-center gap-1.5 px-3 py-2.5 border-b border-zinc-100">
-              <span className="size-2.5 rounded-full bg-[#FF5F57]" />
-              <span className="size-2.5 rounded-full bg-[#FEBC2E]" />
-              <span className="size-2.5 rounded-full bg-[#28C840]" />
-              <span className="ml-3 font-mono text-[10px] text-zinc-500">
-                portfolio.tsx
-              </span>
-            </div>
-            <pre className="font-mono text-[10px] leading-[16px] px-3 py-2 text-zinc-800">
-              <code>
-                <span className="text-zinc-400">1</span>{" "}
-                <span className="text-[#A855F7]">export</span>{" "}
-                <span className="text-[#A855F7]">function</span>{" "}
-                <span className="text-[#2563EB]">Craft</span>() {"{"}
-                {"\n"}
-                <span className="text-zinc-400">2</span>{" "}
-                <span className="text-[#A855F7]">return</span>{" "}
-                <span className="text-zinc-700">&lt;</span>
-                <span className="text-[#16A34A]">Grid</span>{" "}
-                <span className="text-[#0891B2]">cols</span>=
-                <span className="text-zinc-700">{"{3}"}</span>
-                <span className="text-zinc-700">&gt;</span>
-                {"\n"}
-                <span className="text-zinc-400">3</span>{" "}
-                {"{projects.map(p => ("}
-                {"\n"}
-                <span className="text-zinc-400">4</span>{" "}
-                <span className="text-zinc-700">&lt;</span>
-                <span className="text-[#16A34A]">Card</span>{" "}
-                <span className="text-[#0891B2]">key</span>=
-                <span className="text-zinc-700">{"{p.id}"}</span>{" "}
-                <span className="text-zinc-700">/&gt;</span>
-                {"\n"}
-                <span className="text-zinc-400">5</span> {"))}"}
-                {"\n"}
-                <span className="text-zinc-400">6</span>{" "}
-                <span className="text-zinc-700">&lt;/</span>
-                <span className="text-[#16A34A]">Grid</span>
-                <span className="text-zinc-700">&gt;</span>
-                {"\n"}
-                <span className="text-zinc-400">7</span> {"}"}
-              </code>
-            </pre>
-          </div>
-        </div>
-      }
-    />
-  );
-}
-
-function CardQuote() {
-  return (
-    <Card
-      title="Restraint"
-      subtitle="The case for fewer elements, more intention."
-      preview={
-        <div className="absolute inset-0 bg-[#F4EFE6] flex flex-col items-center justify-center px-8 text-center">
-          <p
-            className="text-[22px] leading-[30px] text-[#1A1A1A] font-medium"
-            style={{ fontFamily: "Georgia, serif" }}
-          >
-            A design is finished
-            <br />
-            when nothing else can
-            <br />
-            be taken away.
-          </p>
-          <p className="mt-5 text-[10px] tracking-[0.18em] text-[#6B6358] font-medium">
-            — ANTOINE DE SAINT-EXUPÉRY
-          </p>
-        </div>
-      }
-    />
+      </div>
+    </div>
   );
 }
