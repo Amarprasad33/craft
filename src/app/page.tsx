@@ -3,6 +3,7 @@ import { Logo } from "./logo";
 import CatAnimation from "@/app/(animated-icons)/cat/page";
 import FactoryPage from "@/app/(animated-icons)/factory/page";
 import WeatherPage from "@/app/(animated-icons)/weather/page";
+import { CardReaderFrame } from "@/app/card-reader/card-reader";
 
 // Each icon page wraps itself in a full-screen centering div.
 // Neutralise that wrapper so the icon only takes its own size.
@@ -15,6 +16,12 @@ const works = [
     title: "Animated icons",
     subtitle: "Small icons with idle, hover and click states, built in motion.",
     preview: <IconsArtwork />,
+  },
+  {
+    href: "/card-reader",
+    title: "Card reader",
+    subtitle: "A card slides into a reader that checks it, row by row.",
+    preview: <CardReaderArtwork />,
   },
 ];
 
@@ -106,6 +113,17 @@ function IconsArtwork() {
         <div className={`${unwrap} scale-[0.55]`}>
           <FactoryPage />
         </div>
+      </div>
+    </div>
+  );
+}
+
+// The reader scene, scaled up and cropped to the card and the screen.
+function CardReaderArtwork() {
+  return (
+    <div className="pointer-events-none absolute inset-0 flex items-center bg-[#ECE9E3]">
+      <div className="w-full origin-[42%_50%] scale-[1.34]">
+        <CardReaderFrame />
       </div>
     </div>
   );
