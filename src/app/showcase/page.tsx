@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import LightBlubAnimation from "@/app/(animated-icons)/(emils-course-icons)/lightbulb/page";
 import CatAnimation from "@/app/(animated-icons)/cat/page";
 import FactoryPage from "@/app/(animated-icons)/factory/page";
+import TelephoneAnimation from "@/app/(animated-icons)/phone/page";
 import TerminalAnimation from "@/app/(animated-icons)/terminal/page";
 import WeatherPage from "@/app/(animated-icons)/weather/page";
 import CarWheelAnimation from "@/app/(animated-icons)/wheel/page";
@@ -61,6 +62,13 @@ const icons = [
     slot:
       "col-start-2 row-start-4 translate-x-0 translate-y-10 sm:col-start-2 sm:row-start-3 sm:translate-x-16 sm:-translate-y-16 lg:left-[51.7%] lg:top-[68.1%]",
     size: "scale-90 sm:scale-85 lg:scale-80",
+  },
+  {
+    name: "Phone",
+    Icon: TelephoneAnimation,
+    slot:
+      "col-span-2 col-start-1 row-start-5 translate-x-8 translate-y-6 sm:col-span-1 sm:col-start-1 sm:row-start-3 sm:translate-x-10 sm:translate-y-2 lg:left-[38%] lg:top-[86%]",
+    size: "scale-75 sm:scale-80 lg:scale-85",
   },
 ];
 

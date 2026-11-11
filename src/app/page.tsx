@@ -28,18 +28,12 @@ const works = [
 export default function Home() {
   return (
     <main className="flex flex-1 flex-col pb-24 sm:pb-32">
-      <header className="flex w-full items-center justify-between px-4 pt-6 sm:px-12 sm:pt-8">
+      <header className="flex w-full items-center px-4 pt-6 sm:px-12 sm:pt-8">
         <Logo />
-        <Link
-          href="/reference"
-          className="text-[15px] leading-[18px] text-zinc-400 transition-colors hover:text-white"
-        >
-          Reference
-        </Link>
       </header>
       <section className="px-4 pt-12 sm:px-12 sm:pt-16">
         <div className="mx-auto flex w-full max-w-[1098px] flex-col gap-8 sm:gap-12">
-          <SectionPill label="Design Craft" />
+          <SectionPill label="Experiments" />
           <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 sm:gap-y-12 lg:grid-cols-3">
             {works.map((work) => (
               <Card key={work.href} {...work} />
